@@ -1,5 +1,15 @@
-// controllers/authController.js
 import User from '../models/User.js';
+import mongoose from 'mongoose';
+
+// Helper function to ensure DB connection on serverless executions
+const connectDB = async () => {
+  if (mongoose.connection.readyState >= 1) return;
+  
+  const mongoURI = process.env.MONGO_URI || process.env.MONGODB_URI;
+  if (!mongoURI) throw new Error('Database URI is missing from environment variables.');
+  
+  await mongoose.connect(mongoURI);
+};
 
 // Helper function to send users to the right landing page safely
 const getRedirectPath = (role) => {
@@ -18,6 +28,9 @@ export const userForm = (req, res) => {
 // 2. Process Login
 export const storeUser = async (req, res) => {
   try {
+    // 💡 Ensure MongoDB connection before running queries
+    await connectDB();
+
     const { username, password } = req.body;
     const user = await User.findOne({ username });
 
@@ -55,6 +68,9 @@ export const registerForm = (req, res) => {
 // 4. Process Sign-Up
 export const storeNewUser = async (req, res) => {
   try {
+    // 💡 Ensure MongoDB connection before running queries
+    await connectDB();
+
     const { username, password, role } = req.body;
 
     const existingUser = await User.findOne({ username });
@@ -76,7 +92,7 @@ export const storeNewUser = async (req, res) => {
       role: newUser.role
     };
 
-    // FIXED: Save session before redirecting on Sign-Up
+    // Save session before redirecting on Sign-Up
     req.session.save((err) => {
       if (err) console.error('Session save error during registration:', err);
       return res.redirect(getRedirectPath(newUser.role));
