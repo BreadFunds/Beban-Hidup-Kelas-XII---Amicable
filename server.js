@@ -39,7 +39,7 @@ app.use(session({
 }));
 
 // 4. Database Connection
-mongoose.connect(process.env.MONGODB_URI || 'mongodb://127.0.0.1:27017/assignmentTracker')
+mongoose.connect(process.env.MONGO_URI)
   .then(() => console.log('MongoDB Connected Successfully'))
   .catch((err) => console.error('MongoDB Connection Error:', err));
 
@@ -48,7 +48,7 @@ app.use('/', authRoutes);
 app.use('/', assignmentRoutes);
 
 // 6. Start Server
-const PORT = process.env.PORT || 3213;
+const PORT = process.env.PORT;
 app.listen(PORT, () => {
   console.log(`Server running on http://localhost:${PORT}`);
 });
