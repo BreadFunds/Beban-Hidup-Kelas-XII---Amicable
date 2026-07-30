@@ -1,0 +1,12 @@
+Title : Class Assignment Tracker
+Concept of Website: This Website helps students of my class to track assignments and their deadlines. The assignments have short descriptions on what page the assignment is on, or where to do it.
+Flow : User opens the website and gets redirected to Login page. Once user logs in they are either a student or an admin. 
+Flow 1 (Student)    -> The student gets to see in an organized list what assignments they have to do, with their deadlines and dates.
+                    -> The student also gets personally check off the assignments that they have finished, and said assignment(s) get crossed and turn gray.
+                    -> The students get to message admins if they wish to ask the admins questions, or even suggestions.
+                    -> The assignments turn red if the student hasn't checked off the assignment 1 day before the deadline.
+
+Flow 2 (Admin)      -> The admin gets all the flows from the student, but is able to upload assignments to do.
+                    -> The assignment has: Title, lesson, brief description, deadline, and date/time of post.
+                    -> The admin gets to edit the assignments posted.
+                    -> The assignment archives itself after the deadline has passed.

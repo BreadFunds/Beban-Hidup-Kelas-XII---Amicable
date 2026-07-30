@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Beban Hidup Kelas XII - Amicable</title>
+
+  <!-- External Styles & Icons -->
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/5.3.3/css/bootstrap.min.css" rel="stylesheet">
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-icons/1.11.3/font/bootstrap-icons.min.css" rel="stylesheet">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@500;600;700;800&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+  <style>
+    :root {
+      --bg: #0c0d0f;
+      --bg-soft: #131417;
+      --surface: #17181c;
+      --surface-2: #1d1f24;
+      --border: rgba(255,255,255,.08);
+      --border-soft: rgba(255,255,255,.05);
+      --text: #f2f3f5;
+      --text-muted: #9298a3;
+      --text-faint: #676c76;
+      --accent: #2f9bf0;
+      --accent-dim: rgba(47,155,240,.14);
+      --red: #f0553f;
+      --red-dim: rgba(240,85,63,.13);
+      --gray-done: #5b606a;
+    }
+
+    * { box-sizing: border-box; }
+
+    body {
+      background: radial-gradient(circle at 25% 15%, #1a1c20 0%, var(--bg) 55%);
+      font-family: 'Inter', sans-serif;
+      color: var(--text);
+      min-height: 100vh;
+    }
+
+    .font-display { font-family: 'Poppins', sans-serif; font-weight: 700; letter-spacing: -.01em; }
+
+    /* Top Bar */
+    .top-bar {
+      background: var(--bg-soft);
+      border-bottom: 1px solid var(--border);
+    }
+    .brand-badge {
+      width: 36px; height: 36px; border-radius: 10px;
+      background: var(--accent);
+      display: flex; align-items: center; justify-content: center;
+      color: #fff; font-family: 'Poppins', sans-serif; font-weight: 700; font-size: .95rem;
+      box-shadow: 0 0 0 4px var(--accent-dim);
+    }
+
+    /* Buttons & Global Form Controls */
+    .btn-accent {
+      background: var(--accent); color: #fff;
+      border: none; font-weight: 600; font-size: .85rem;
+      border-radius: 10px;
+    }
+    .btn-accent:hover { background: #2489d9; color: #fff; }
+
+    .btn-outline-dark2 {
+      background: transparent; color: var(--text-muted);
+      border: 1px solid var(--border); font-weight: 500; font-size: .85rem; border-radius: 10px;
+    }
+    .btn-outline-dark2:hover { background: var(--surface-2); color: var(--text); }
+
+    .modal-content {
+      background-color: var(--surface);
+      border: 1px solid var(--border);
+      color: var(--text);
+      border-radius: 16px;
+    }
+    .form-control {
+      border-radius: 10px; border: 1px solid var(--border);
+      font-size: .9rem; background: var(--surface-2); color: var(--text);
+    }
+    .form-control:focus {
+      border-color: var(--accent); box-shadow: 0 0 0 .2rem var(--accent-dim);
+      background: var(--surface-2); color: var(--text);
+    }
+  </style>
+</head>
+<body>
+
+  <!-- TOP BAR -->
+  <div class="top-bar px-3 py-2 d-flex align-items-center justify-content-between">
+    <div class="d-flex align-items-center gap-2">
+      <div class="brand-badge">12A</div>
+      <span class="font-display fs-6" style="color:var(--text);">Beban Hidup Kelas XII - Amicable</span>
+    </div>
+    
+    {{#if user}}
+      <div class="d-flex align-items-center gap-2">
+        <span class="badge {{#if isAdmin}}bg-danger{{else}}bg-primary{{/if}} rounded-pill">
+          {{#if isAdmin}}Admin{{else}}Student{{/if}}
+        </span>
+        <a href="/logout" class="btn btn-outline-dark2 btn-sm ms-2">Logout</a>
+      </div>
+    {{/if}}
+  </div>
+
+  <!-- VIEW INJECTION -->
+  {{{body}}}
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/5.3.3/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>
