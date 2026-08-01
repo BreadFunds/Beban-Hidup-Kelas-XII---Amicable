@@ -121,3 +121,11 @@ export const logout = (req, res) => {
     res.redirect('/login');
   });
 };
+
+export const materialUser = (req, res) => {
+  if (!req.session || !req.session.user) {
+    return res.redirect('/login');
+  }
+
+  res.render('material', { user: req.session.user });
+};

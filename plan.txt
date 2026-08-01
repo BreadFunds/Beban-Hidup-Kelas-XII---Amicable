@@ -10,3 +10,6 @@ Flow 2 (Admin)      -> The admin gets all the flows from the student, but is abl
                     -> The assignment has: Title, lesson, brief description, deadline, and date/time of post.
                     -> The admin gets to edit the assignments posted.
                     -> The assignment archives itself after the deadline has passed.
+
+Flow 3 (Material)   -> The admin creates materials that can be sent in the form of a file or image
+                    -> Only admins get to input files, but students can download uploaded files
