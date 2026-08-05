@@ -6,7 +6,7 @@ import {
   deleteMaterial 
 } from '../controllers/materialController.js';
 import { requireAuth, requireAdmin } from '../middleware/authmiddleware.js';
-import { upload } from '../middleware/uploadMiddleware.js';
+import { upload } from '../middleware/uploadmiddleware.js';
 
 const router = express.Router();
 
