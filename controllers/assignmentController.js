@@ -1,20 +1,24 @@
 import Assignment from '../models/Assignment.js';
 import User from '../models/User.js';
+import Material from '../models/Material.js'; // 1. ADDED MISSING IMPORT
 
 // GET /admin — Render Admin Console
 export const getAdminPage = async (req, res) => {
   try {
-    // Fetch active assignments (including docs where isArchived is undefined)
+    // 1. Fetch assignments & users
     const assignments = await Assignment.find({ isArchived: { $ne: true } }).lean();
     const archivedAssignments = await Assignment.find({ isArchived: true }).lean();
     const userCount = await User.countDocuments({ role: 'student' });
 
-    // Format dates & attach input properties
+    // 2. Fetch class materials
+    const materials = await Material.find().sort({ createdAt: -1 }).lean();
+
+    // 3. Format dates & attach input properties
     const formattedAssignments = assignments.map(a => {
       const due = new Date(a.dueDate);
       return {
         ...a,
-        rawDueDate: due.toISOString().slice(0, 16), // Pre-fills <input type="datetime-local">
+        rawDueDate: due.toISOString().slice(0, 16),
         formattedDueDate: due.toLocaleString('en-US', {
           dateStyle: 'medium',
           timeStyle: 'short'
@@ -30,11 +34,16 @@ export const getAdminPage = async (req, res) => {
       })
     }));
 
+    // Safe user lookup (fallback between req.user and req.session.user)
+    const currentUser = req.user || (req.session && req.session.user);
+
+    // 4. Pass materials array to view
     res.render('admin', {
-      user: req.session.user,
+      user: currentUser,
       isAdmin: true,
       assignments: formattedAssignments,
       archivedAssignments: formattedArchived,
+      materials: materials || [],
       userCount,
       error: req.query.error || null
     });
@@ -53,12 +62,14 @@ export const createAssignment = async (req, res) => {
       return res.status(400).redirect('/admin?error=All fields are required');
     }
 
+    const currentUser = req.user || (req.session && req.session.user);
+
     const newAssignment = new Assignment({
       title,
       subject,
       description,
       dueDate: new Date(dueDate),
-      createdBy: req.session.user._id
+      createdBy: currentUser ? currentUser._id : null
     });
 
     await newAssignment.save();
@@ -75,7 +86,6 @@ export const deleteAssignment = async (req, res) => {
     const { id } = req.params;
     await Assignment.findByIdAndDelete(id);
 
-    // Redirect back to whichever page sent the delete request
     const redirectUrl = req.headers.referer || '/admin';
     res.redirect(redirectUrl);
   } catch (err) {
@@ -87,12 +97,13 @@ export const deleteAssignment = async (req, res) => {
 // GET /dashboard — Student & Admin Dashboard
 export const getDashboard = async (req, res) => {
   try {
-    // 1. Guard check: If no user is logged in, redirect to login page
-    if (!req.user) {
+    const currentUser = req.user || (req.session && req.session.user);
+
+    if (!currentUser) {
       return res.redirect('/login');
     }
 
-    const userId = req.user._id;
+    const userId = currentUser._id;
     const now = new Date();
     const twentyFourHoursFromNow = new Date(now.getTime() + (24 * 60 * 60 * 1000));
 
@@ -135,8 +146,8 @@ export const getDashboard = async (req, res) => {
     });
 
     res.render('dashboard', {
-      user: req.user,
-      isAdmin: req.user.role === 'admin',
+      user: currentUser,
+      isAdmin: currentUser.role === 'admin',
       assignments: activeList,
       archivedAssignments: archivedList,
       error: req.flash ? req.flash('error') : null
@@ -151,14 +162,15 @@ export const getDashboard = async (req, res) => {
 export const toggleAssignment = async (req, res) => {
   try {
     const { id } = req.params;
-    const userId = req.session.user._id;
+    const currentUser = req.user || (req.session && req.session.user);
+    if (!currentUser) return res.redirect('/login');
 
     const assignment = await Assignment.findById(id);
     if (!assignment) return res.redirect('/dashboard');
 
-    const index = assignment.completedBy.indexOf(userId);
+    const index = assignment.completedBy.indexOf(currentUser._id);
     if (index === -1) {
-      assignment.completedBy.push(userId);
+      assignment.completedBy.push(currentUser._id);
     } else {
       assignment.completedBy.splice(index, 1);
     }
