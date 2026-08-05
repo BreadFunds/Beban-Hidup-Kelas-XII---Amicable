@@ -10,16 +10,16 @@ import { upload } from '../middleware/uploadmiddleware.js';
 
 const router = express.Router();
 
-// GET /materials - View all materials (authenticated users)
+// GET /materials
 router.get('/', requireAuth, getMaterials);
 
-// POST /materials - Upload new material (admin only)
-router.post('/', requireAuth, requireAdmin, upload.single('materialFile'), postMaterial);
+// POST /materials - Use upload.array() and specify the field name and max count
+router.post('/', requireAuth, requireAdmin, upload.array('materialFiles', 10), postMaterial);
 
-// POST /materials/edit/:id - Edit existing material (admin only)
+// POST /materials/edit/:id - Edit usually replaces a single file, so keep this as upload.single()
 router.post('/edit/:id', requireAuth, requireAdmin, upload.single('materialFile'), updateMaterial);
 
-// POST /materials/delete/:id - Delete material (admin only)
+// POST /materials/delete/:id
 router.post('/delete/:id', requireAuth, requireAdmin, deleteMaterial);
 
 export default router;

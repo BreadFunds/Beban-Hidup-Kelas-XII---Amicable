@@ -4,23 +4,29 @@
     --bg-soft: #131417;
     --surface: #17181c;
     --surface-2: #1d1f24;
-    --border: rgba(255,255,255,.08);
-    --border-soft: rgba(255,255,255,.05);
+    --border: rgba(255, 255, 255, .08);
+    --border-soft: rgba(255, 255, 255, .05);
     --text: #f2f3f5;
     --text-muted: #9298a3;
     --text-faint: #676c76;
     --accent: #2f9bf0;
-    --accent-dim: rgba(47,155,240,.14);
+    --accent-dim: rgba(47, 155, 240, .14);
     --red: #f0553f;
-    --red-dim: rgba(240,85,63,.13);
+    --red-dim: rgba(240, 85, 63, .13);
   }
-  
-  .font-display { font-family: 'Poppins', sans-serif; font-weight: 700; letter-spacing: -.01em; }
+
+  .font-display {
+    font-family: 'Poppins', sans-serif;
+    font-weight: 700;
+    letter-spacing: -.01em;
+  }
+
   .sidebar {
     background: var(--bg-soft);
     border-right: 1px solid var(--border);
     min-height: calc(100vh - 61px);
   }
+
   .sidebar .nav-link {
     color: var(--text-muted);
     font-weight: 500;
@@ -30,50 +36,101 @@
     margin-bottom: .15rem;
     border-left: 3px solid transparent;
   }
-  .sidebar .nav-link i { width: 20px; }
+
+  .sidebar .nav-link i {
+    width: 20px;
+  }
+
   .sidebar .nav-link.active {
     background: var(--accent-dim);
     color: var(--text);
     border-left: 3px solid var(--accent);
   }
-  .sidebar .nav-link:hover { color: var(--text); }
+
+  .sidebar .nav-link:hover {
+    color: var(--text);
+  }
+
   .class-card {
     background: var(--surface);
     border: 1px solid var(--border);
     border-radius: 12px;
   }
-  .divider { border-top: 1px solid var(--border); }
+
+  .divider {
+    border-top: 1px solid var(--border);
+  }
+
   .stat-chip {
     background: var(--surface);
     border: 1px solid var(--border);
     border-radius: 14px;
   }
-  .stat-num { font-family: 'Poppins', sans-serif; font-weight: 700; font-size: 1.7rem; line-height: 1; color: var(--text); }
-  .stat-label { font-size: .72rem; text-transform: uppercase; letter-spacing: .06em; color: var(--text-faint); font-weight: 600; margin-top: .25rem; }
-  
+
+  .stat-num {
+    font-family: 'Poppins', sans-serif;
+    font-weight: 700;
+    font-size: 1.7rem;
+    line-height: 1;
+    color: var(--text);
+  }
+
+  .stat-label {
+    font-size: .72rem;
+    text-transform: uppercase;
+    letter-spacing: .06em;
+    color: var(--text-faint);
+    font-weight: 600;
+    margin-top: .25rem;
+  }
+
   .card-form {
     background: var(--surface);
     border: 1px solid var(--border);
     border-radius: 16px;
   }
+
   .admin-table-card {
     background: var(--surface);
     border: 1px solid var(--border);
     border-radius: 14px;
   }
+
   .btn-accent {
-    background: var(--accent); color: #fff; border: none; font-weight:600; font-size:.85rem; border-radius: 10px;
+    background: var(--accent);
+    color: #fff;
+    border: none;
+    font-weight: 600;
+    font-size: .85rem;
+    border-radius: 10px;
   }
-  .btn-accent:hover { background: #2489d9; color: #fff; }
-  .form-control, .form-select {
-    border-radius: 10px; border: 1px solid var(--border); font-size: .9rem;
-    background: var(--surface-2); color: var(--text);
+
+  .btn-accent:hover {
+    background: #2489d9;
+    color: #fff;
   }
-  .form-control:focus, .form-select:focus {
-    border-color: var(--accent); box-shadow: 0 0 0 .2rem var(--accent-dim);
-    background: var(--surface-2); color: var(--text);
+
+  .form-control,
+  .form-select {
+    border-radius: 10px;
+    border: 1px solid var(--border);
+    font-size: .9rem;
+    background: var(--surface-2);
+    color: var(--text);
   }
-  .form-label { color: var(--text-muted); }
+
+  .form-control:focus,
+  .form-select:focus {
+    border-color: var(--accent);
+    box-shadow: 0 0 0 .2rem var(--accent-dim);
+    background: var(--surface-2);
+    color: var(--text);
+  }
+
+  .form-label {
+    color: var(--text-muted);
+  }
+
   .section-title-wrapper {
     padding-bottom: .5rem;
     border-bottom: 1px solid var(--border);
@@ -82,20 +139,22 @@
 
 <div class="container-fluid p-0">
   <div class="row g-0">
-    
+
     <!-- SIDEBAR -->
     <div class="col-12 col-lg-2 sidebar p-3">
       <div class="class-card p-3 mb-3">
-        <div style="font-size:.68rem; letter-spacing:.06em; text-transform:uppercase; color:var(--text-faint); font-weight:600;">Logged in as</div>
+        <div
+          style="font-size:.68rem; letter-spacing:.06em; text-transform:uppercase; color:var(--text-faint); font-weight:600;">
+          Logged in as</div>
         <div class="fw-semibold mt-1">{{user.username}}</div>
         <div class="text-secondary" style="font-size:.78rem;">Class Admin</div>
       </div>
-      
+
       <nav class="nav flex-column">
         <a class="nav-link" href="/dashboard"><i class="bi bi-card-checklist"></i> Assignments</a>
         <a class="nav-link" href="/materials"><i class="bi bi-folder2-open"></i> Class materials</a>
         {{#if isAdmin}}
-          <a class="nav-link active" href="/admin"><i class="bi bi-shield-lock"></i> Admin Panel</a>
+        <a class="nav-link active" href="/admin"><i class="bi bi-shield-lock"></i> Admin Panel</a>
         {{/if}}
       </nav>
       <div class="divider my-3"></div>
@@ -104,11 +163,11 @@
 
     <!-- MAIN ADMIN CONTENT -->
     <div class="col-12 col-lg-10 p-3 p-lg-4">
-      
+
       {{#if error}}
-        <div class="alert alert-danger py-2 px-3 mb-3" style="font-size: 0.85rem; border-radius: 10px;">
-          {{error}}
-        </div>
+      <div class="alert alert-danger py-2 px-3 mb-3" style="font-size: 0.85rem; border-radius: 10px;">
+        {{error}}
+      </div>
       {{/if}}
 
       <div class="d-flex justify-content-between align-items-center mb-4">
@@ -160,36 +219,37 @@
             <div class="font-display fs-6 mb-3 text-secondary">All Active Assignments</div>
 
             {{#if assignments.length}}
-              <div class="table-responsive">
-                <table class="table table-dark table-hover align-middle mb-0" style="background: transparent;">
-                  <thead>
-                    <tr class="text-secondary small border-secondary">
-                      <th>TITLE</th>
-                      <th>SUBJECT</th>
-                      <th>DUE DATE</th>
-                      <th class="text-end">ACTIONS</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {{#each assignments}}
-                      <tr class="border-secondary">
-                        <td class="fw-semibold">{{this.title}}</td>
-                        <td><span class="badge bg-secondary">{{this.subject}}</span></td>
-                        <td class="small">{{this.formattedDueDate}}</td>
-                        <td class="text-end">
-                          <form action="/assignments/delete/{{this._id}}" method="POST" class="d-inline">
-                            <button type="submit" class="btn btn-sm btn-outline-danger" onclick="return confirm('Delete this assignment permanently?')">
-                              <i class="bi bi-trash"></i>
-                            </button>
-                          </form>
-                        </td>
-                      </tr>
-                    {{/each}}
-                  </tbody>
-                </table>
-              </div>
+            <div class="table-responsive">
+              <table class="table table-dark table-hover align-middle mb-0" style="background: transparent;">
+                <thead>
+                  <tr class="text-secondary small border-secondary">
+                    <th>TITLE</th>
+                    <th>SUBJECT</th>
+                    <th>DUE DATE</th>
+                    <th class="text-end">ACTIONS</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {{#each assignments}}
+                  <tr class="border-secondary">
+                    <td class="fw-semibold">{{this.title}}</td>
+                    <td><span class="badge bg-secondary">{{this.subject}}</span></td>
+                    <td class="small">{{this.formattedDueDate}}</td>
+                    <td class="text-end">
+                      <form action="/assignments/delete/{{this._id}}" method="POST" class="d-inline">
+                        <button type="submit" class="btn btn-sm btn-outline-danger"
+                          onclick="return confirm('Delete this assignment permanently?')">
+                          <i class="bi bi-trash"></i>
+                        </button>
+                      </form>
+                    </td>
+                  </tr>
+                  {{/each}}
+                </tbody>
+              </table>
+            </div>
             {{else}}
-              <p class="text-secondary py-3 text-center mb-0">No active assignments posted.</p>
+            <p class="text-secondary py-3 text-center mb-0">No active assignments posted.</p>
             {{/if}}
           </div>
         </div>
@@ -198,7 +258,7 @@
         <div class="col-12 col-lg-5">
           <div class="card-form p-4">
             <div class="font-display fs-6 mb-3"><i class="bi bi-plus-circle me-1"></i> Post New Assignment</div>
-            
+
             <form action="/assignments" method="POST">
               <div class="mb-3">
                 <label class="form-label small fw-semibold">Title</label>
@@ -212,7 +272,8 @@
 
               <div class="mb-3">
                 <label class="form-label small fw-semibold">Description</label>
-                <textarea name="description" class="form-control" rows="3" placeholder="Instructions, references..." required></textarea>
+                <textarea name="description" class="form-control" rows="3" placeholder="Instructions, references..."
+                  required></textarea>
               </div>
 
               <div class="mb-3">
@@ -243,39 +304,40 @@
             <div class="font-display fs-6 mb-3 text-secondary">All Uploaded Files</div>
 
             {{#if materials.length}}
-              <div class="table-responsive">
-                <table class="table table-dark table-hover align-middle mb-0" style="background: transparent;">
-                  <thead>
-                    <tr class="text-secondary small border-secondary">
-                      <th>TITLE</th>
-                      <th>SUBJECT</th>
-                      <th>FILE NAME</th>
-                      <th class="text-end">ACTIONS</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {{#each materials}}
-                      <tr class="border-secondary">
-                        <td class="fw-semibold">{{this.title}}</td>
-                        <td><span class="badge bg-secondary">{{this.subject}}</span></td>
-                        <td class="small text-truncate" style="max-width: 150px;">{{this.originalName}}</td>
-                        <td class="text-end">
-                          <a href="{{this.filePath}}" download class="btn btn-sm btn-outline-light me-1" title="Download">
-                            <i class="bi bi-download"></i>
-                          </a>
-                          <form action="/materials/delete/{{this._id}}" method="POST" class="d-inline">
-                            <button type="submit" class="btn btn-sm btn-outline-danger" onclick="return confirm('Delete this material permanently?')" title="Delete">
-                              <i class="bi bi-trash"></i>
-                            </button>
-                          </form>
-                        </td>
-                      </tr>
-                    {{/each}}
-                  </tbody>
-                </table>
-              </div>
+            <div class="table-responsive">
+              <table class="table table-dark table-hover align-middle mb-0" style="background: transparent;">
+                <thead>
+                  <tr class="text-secondary small border-secondary">
+                    <th>TITLE</th>
+                    <th>SUBJECT</th>
+                    <th>FILE NAME</th>
+                    <th class="text-end">ACTIONS</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {{#each materials}}
+                  <tr class="border-secondary">
+                    <td class="fw-semibold">{{this.title}}</td>
+                    <td><span class="badge bg-secondary">{{this.subject}}</span></td>
+                    <td class="small text-truncate" style="max-width: 150px;">{{this.originalName}}</td>
+                    <td class="text-end">
+                      <a href="{{this.filePath}}" download class="btn btn-sm btn-outline-light me-1" title="Download">
+                        <i class="bi bi-download"></i>
+                      </a>
+                      <form action="/materials/delete/{{this._id}}" method="POST" class="d-inline">
+                        <button type="submit" class="btn btn-sm btn-outline-danger"
+                          onclick="return confirm('Delete this material permanently?')" title="Delete">
+                          <i class="bi bi-trash"></i>
+                        </button>
+                      </form>
+                    </td>
+                  </tr>
+                  {{/each}}
+                </tbody>
+              </table>
+            </div>
             {{else}}
-              <p class="text-secondary py-3 text-center mb-0">No materials posted yet.</p>
+            <p class="text-secondary py-3 text-center mb-0">No materials posted yet.</p>
             {{/if}}
           </div>
         </div>
@@ -284,7 +346,7 @@
         <div class="col-12 col-lg-5">
           <div class="card-form p-4">
             <div class="font-display fs-6 mb-3"><i class="bi bi-upload me-1"></i> Upload New Material</div>
-            
+
             <form action="/materials" method="POST" enctype="multipart/form-data">
               <div class="mb-3">
                 <label class="form-label small fw-semibold">Title</label>
@@ -298,12 +360,16 @@
 
               <div class="mb-3">
                 <label class="form-label small fw-semibold">Description</label>
-                <textarea name="description" class="form-control" rows="2" placeholder="Short description..."></textarea>
+                <textarea name="description" class="form-control" rows="2"
+                  placeholder="Short description..."></textarea>
               </div>
 
               <div class="mb-3">
-                <label class="form-label small fw-semibold">File Attachment</label>
-                <input type="file" name="materialFile" class="form-control" required>
+                <label class="form-label small fw-semibold">File Attachment(s)</label>
+                <!-- Add the 'multiple' attribute -->
+                <input type="file" name="materialFiles" class="form-control" multiple required>
+                <div class="form-text text-secondary" style="font-size: 0.75rem;">You can select multiple files at once.
+                </div>
               </div>
 
               <button type="submit" class="btn btn-accent w-100 py-2">

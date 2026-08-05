@@ -36,27 +36,35 @@ export const getMaterials = async (req, res) => {
   }
 };
 
-// POST /materials - Save new uploaded material
+// POST /materials - Save multiple uploaded materials
 export const postMaterial = async (req, res) => {
   try {
-    if (!req.file) {
-      return res.redirect('/materials?error=Please select a file to upload.');
+    // Check req.files instead of req.file
+    if (!req.files || req.files.length === 0) {
+      return res.redirect('/materials?error=Please select at least one file to upload.');
     }
 
     const { title, subject, description } = req.body;
 
-    await Material.create({
-      title,
-      subject,
-      description,
-      filePath: `/uploads/${req.file.filename}`,
-      originalName: req.file.originalname
+    // Create an array of material objects to insert
+    const materialsToCreate = req.files.map((file, index) => {
+      return {
+        // If multiple files are uploaded, append a number to the title to distinguish them
+        title: req.files.length > 1 ? `${title} (${index + 1})` : title,
+        subject,
+        description,
+        filePath: `/uploads/${file.filename}`,
+        originalName: file.originalname
+      };
     });
+
+    // Insert all documents at once
+    await Material.insertMany(materialsToCreate);
 
     res.redirect('/materials');
   } catch (err) {
-    console.error('Error uploading material:', err);
-    res.redirect('/materials?error=Error uploading material.');
+    console.error('Error uploading materials:', err);
+    res.redirect('/materials?error=Error uploading materials.');
   }
 };
 
