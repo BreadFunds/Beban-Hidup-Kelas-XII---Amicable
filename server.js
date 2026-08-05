@@ -4,7 +4,7 @@ dotenv.config();
 import express from 'express';
 import mongoose from 'mongoose';
 import session from 'express-session';
-import MongoStore from 'connect-mongo'; // 1. Import MongoStore
+import MongoStore from 'connect-mongo';
 import { engine } from 'express-handlebars';
 import path from 'path';
 import { fileURLToPath } from 'url';
@@ -12,6 +12,7 @@ import { fileURLToPath } from 'url';
 // Import Routes
 import authRoutes from './routes/authRoutes.js';
 import assignmentRoutes from './routes/assignmentRoutes.js';
+import materialRoutes from './routes/materialRoutes.js';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -61,9 +62,10 @@ app.use(session({
 // 5. Mount Routes
 app.use('/', authRoutes);
 app.use('/', assignmentRoutes);
+app.use('/materials', materialRoutes); // Corrected mounting path
 
 // 6. Start Server
-const PORT = process.env.PORT;
+const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => {
   console.log(`Server running on http://localhost:${PORT}`);
 });

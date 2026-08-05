@@ -1,5 +1,21 @@
-{{!-- views/admin.handlebars --}}
 <style>
+  :root {
+    --bg: #0c0d0f;
+    --bg-soft: #131417;
+    --surface: #17181c;
+    --surface-2: #1d1f24;
+    --border: rgba(255,255,255,.08);
+    --border-soft: rgba(255,255,255,.05);
+    --text: #f2f3f5;
+    --text-muted: #9298a3;
+    --text-faint: #676c76;
+    --accent: #2f9bf0;
+    --accent-dim: rgba(47,155,240,.14);
+    --red: #f0553f;
+    --red-dim: rgba(240,85,63,.13);
+  }
+  
+  .font-display { font-family: 'Poppins', sans-serif; font-weight: 700; letter-spacing: -.01em; }
   .sidebar {
     background: var(--bg-soft);
     border-right: 1px solid var(--border);
@@ -26,6 +42,7 @@
     border: 1px solid var(--border);
     border-radius: 12px;
   }
+  .divider { border-top: 1px solid var(--border); }
   .stat-chip {
     background: var(--surface);
     border: 1px solid var(--border);
@@ -44,9 +61,26 @@
     border: 1px solid var(--border);
     border-radius: 14px;
   }
+  .btn-accent {
+    background: var(--accent); color: #fff; border: none; font-weight:600; font-size:.85rem; border-radius: 10px;
+  }
+  .btn-accent:hover { background: #2489d9; color: #fff; }
+  .form-control, .form-select {
+    border-radius: 10px; border: 1px solid var(--border); font-size: .9rem;
+    background: var(--surface-2); color: var(--text);
+  }
+  .form-control:focus, .form-select:focus {
+    border-color: var(--accent); box-shadow: 0 0 0 .2rem var(--accent-dim);
+    background: var(--surface-2); color: var(--text);
+  }
+  .form-label { color: var(--text-muted); }
+  .section-title-wrapper {
+    padding-bottom: .5rem;
+    border-bottom: 1px solid var(--border);
+  }
 </style>
 
-<div class="container-fluid">
+<div class="container-fluid p-0">
   <div class="row g-0">
     
     <!-- SIDEBAR -->
@@ -59,38 +93,54 @@
       
       <nav class="nav flex-column">
         <a class="nav-link" href="/dashboard"><i class="bi bi-card-checklist"></i> Assignments</a>
-        <a class="nav-link" href="#"><i class="bi bi-chat-dots"></i> Messages</a>
-        <a class="nav-link active" href="/admin"><i class="bi bi-shield-lock"></i> Admin Panel</a>
+        <a class="nav-link" href="/materials"><i class="bi bi-folder2-open"></i> Class materials</a>
+        {{#if isAdmin}}
+          <a class="nav-link active" href="/admin"><i class="bi bi-shield-lock"></i> Admin Panel</a>
+        {{/if}}
       </nav>
+      <div class="divider my-3"></div>
+      <a class="nav-link" href="/messages"><i class="bi bi-chat-dots"></i> Message admin</a>
     </div>
 
     <!-- MAIN ADMIN CONTENT -->
     <div class="col-12 col-lg-10 p-3 p-lg-4">
       
+      {{#if error}}
+        <div class="alert alert-danger py-2 px-3 mb-3" style="font-size: 0.85rem; border-radius: 10px;">
+          {{error}}
+        </div>
+      {{/if}}
+
       <div class="d-flex justify-content-between align-items-center mb-4">
         <div>
           <div class="font-display fs-3">Admin Control Panel</div>
           <div class="text-secondary" style="font-size:.88rem;">
-            Manage posted work, create new assignments, and monitor system activity.
+            Manage posted work, create new assignments, and upload class materials.
           </div>
         </div>
       </div>
 
       <!-- STAT STRIP -->
       <div class="row g-2 mb-4">
-        <div class="col-6 col-md-4">
+        <div class="col-6 col-md-3">
           <div class="stat-chip p-3">
             <div class="stat-num">{{assignments.length}}</div>
             <div class="stat-label">Active Assignments</div>
           </div>
         </div>
-        <div class="col-6 col-md-4">
+        <div class="col-6 col-md-3">
           <div class="stat-chip p-3">
             <div class="stat-num text-danger">{{archivedAssignments.length}}</div>
-            <div class="stat-label">Archived / Expired</div>
+            <div class="stat-label">Archived Assignments</div>
           </div>
         </div>
-        <div class="col-12 col-md-4">
+        <div class="col-6 col-md-3">
+          <div class="stat-chip p-3">
+            <div class="stat-num text-warning">{{materials.length}}</div>
+            <div class="stat-label">Class Materials</div>
+          </div>
+        </div>
+        <div class="col-6 col-md-3">
           <div class="stat-chip p-3">
             <div class="stat-num text-info">{{userCount}}</div>
             <div class="stat-label">Registered Students</div>
@@ -98,11 +148,16 @@
         </div>
       </div>
 
-      <div class="row g-4">
+      <!-- SECTION 1: ASSIGNMENTS -->
+      <div class="section-title-wrapper mb-3">
+        <h4 class="font-display m-0 fs-5"><i class="bi bi-journal-text me-2"></i>Assignments Management</h4>
+      </div>
+
+      <div class="row g-4 mb-4">
         <!-- LEFT: ASSIGNMENT MANAGEMENT TABLE -->
         <div class="col-12 col-lg-7">
           <div class="admin-table-card p-3">
-            <div class="font-display fs-5 mb-3">All Assignments</div>
+            <div class="font-display fs-6 mb-3 text-secondary">All Active Assignments</div>
 
             {{#if assignments.length}}
               <div class="table-responsive">
@@ -142,7 +197,7 @@
         <!-- RIGHT: CREATE NEW ASSIGNMENT FORM -->
         <div class="col-12 col-lg-5">
           <div class="card-form p-4">
-            <div class="font-display fs-5 mb-3"><i class="bi bi-plus-circle me-1"></i> Post New Assignment</div>
+            <div class="font-display fs-6 mb-3"><i class="bi bi-plus-circle me-1"></i> Post New Assignment</div>
             
             <form action="/assignments" method="POST">
               <div class="mb-3">
@@ -162,11 +217,97 @@
 
               <div class="mb-3">
                 <label class="form-label small fw-semibold">Deadline</label>
-                <input type="datetime-local" name="dueDate" class="form-control" value="{{this.rawDueDate}}" required>
+                <input type="datetime-local" name="dueDate" class="form-control" required>
               </div>
 
               <button type="submit" class="btn btn-accent w-100 py-2">
                 <i class="bi bi-send me-1"></i> Publish Assignment
+              </button>
+            </form>
+          </div>
+        </div>
+      </div>
+
+      <!-- SECTION SEPARATOR LINE -->
+      <div class="my-5 divider"></div>
+
+      <!-- SECTION 2: CLASS MATERIALS -->
+      <div class="section-title-wrapper mb-3">
+        <h4 class="font-display m-0 fs-5"><i class="bi bi-folder2-open me-2"></i>Class Materials Management</h4>
+      </div>
+
+      <div class="row g-4">
+        <!-- LEFT: POSTED MATERIALS LIST -->
+        <div class="col-12 col-lg-7">
+          <div class="admin-table-card p-3">
+            <div class="font-display fs-6 mb-3 text-secondary">All Uploaded Files</div>
+
+            {{#if materials.length}}
+              <div class="table-responsive">
+                <table class="table table-dark table-hover align-middle mb-0" style="background: transparent;">
+                  <thead>
+                    <tr class="text-secondary small border-secondary">
+                      <th>TITLE</th>
+                      <th>SUBJECT</th>
+                      <th>FILE NAME</th>
+                      <th class="text-end">ACTIONS</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {{#each materials}}
+                      <tr class="border-secondary">
+                        <td class="fw-semibold">{{this.title}}</td>
+                        <td><span class="badge bg-secondary">{{this.subject}}</span></td>
+                        <td class="small text-truncate" style="max-width: 150px;">{{this.originalName}}</td>
+                        <td class="text-end">
+                          <a href="{{this.filePath}}" download class="btn btn-sm btn-outline-light me-1" title="Download">
+                            <i class="bi bi-download"></i>
+                          </a>
+                          <form action="/materials/delete/{{this._id}}" method="POST" class="d-inline">
+                            <button type="submit" class="btn btn-sm btn-outline-danger" onclick="return confirm('Delete this material permanently?')" title="Delete">
+                              <i class="bi bi-trash"></i>
+                            </button>
+                          </form>
+                        </td>
+                      </tr>
+                    {{/each}}
+                  </tbody>
+                </table>
+              </div>
+            {{else}}
+              <p class="text-secondary py-3 text-center mb-0">No materials posted yet.</p>
+            {{/if}}
+          </div>
+        </div>
+
+        <!-- RIGHT: UPLOAD NEW MATERIAL FORM -->
+        <div class="col-12 col-lg-5">
+          <div class="card-form p-4">
+            <div class="font-display fs-6 mb-3"><i class="bi bi-upload me-1"></i> Upload New Material</div>
+            
+            <form action="/materials" method="POST" enctype="multipart/form-data">
+              <div class="mb-3">
+                <label class="form-label small fw-semibold">Title</label>
+                <input type="text" name="title" class="form-control" placeholder="e.g. Chapter 1 Notes" required>
+              </div>
+
+              <div class="mb-3">
+                <label class="form-label small fw-semibold">Subject</label>
+                <input type="text" name="subject" class="form-control" placeholder="e.g. History" required>
+              </div>
+
+              <div class="mb-3">
+                <label class="form-label small fw-semibold">Description</label>
+                <textarea name="description" class="form-control" rows="2" placeholder="Short description..."></textarea>
+              </div>
+
+              <div class="mb-3">
+                <label class="form-label small fw-semibold">File Attachment</label>
+                <input type="file" name="materialFile" class="form-control" required>
+              </div>
+
+              <button type="submit" class="btn btn-accent w-100 py-2">
+                <i class="bi bi-cloud-upload me-1"></i> Post Material
               </button>
             </form>
           </div>
