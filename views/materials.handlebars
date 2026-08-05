@@ -4,37 +4,88 @@
     --bg-soft: #131417;
     --surface: #17181c;
     --surface-2: #1d1f24;
-    --border: rgba(255,255,255,.08);
-    --border-soft: rgba(255,255,255,.05);
+    --border: rgba(255, 255, 255, .08);
+    --border-soft: rgba(255, 255, 255, .05);
     --text: #f2f3f5;
     --text-muted: #9298a3;
     --text-faint: #676c76;
     --accent: #2f9bf0;
-    --accent-dim: rgba(47,155,240,.14);
+    --accent-dim: rgba(47, 155, 240, .14);
     --red: #f0553f;
-    --red-dim: rgba(240,85,63,.13);
+    --red-dim: rgba(240, 85, 63, .13);
   }
+
   body {
     background: radial-gradient(circle at 25% 15%, #1a1c20 0%, var(--bg) 55%);
     font-family: 'Inter', sans-serif;
     color: var(--text);
     min-height: 100vh;
   }
-  .font-display { font-family: 'Poppins', sans-serif; font-weight: 700; letter-spacing: -.01em; }
-  .sidebar { background: var(--bg-soft); border-right: 1px solid var(--border); min-height: calc(100vh - 61px); }
-  .sidebar .nav-link {
-    color: var(--text-muted); font-weight: 500; font-size: .92rem;
-    border-radius: 10px; padding: .55rem .8rem; margin-bottom: .15rem; border-left: 3px solid transparent;
+
+  .font-display {
+    font-family: 'Poppins', sans-serif;
+    font-weight: 700;
+    letter-spacing: -.01em;
   }
-  .sidebar .nav-link i { width: 20px; }
-  .sidebar .nav-link.active { background: var(--accent-dim); color: var(--text); border-left: 3px solid var(--accent); }
-  .sidebar .nav-link:hover { color: var(--text); }
-  .class-card { background: var(--surface); border: 1px solid var(--border); border-radius: 12px; }
-  .divider { border-top: 1px solid var(--border); }
-  .stat-chip { background: var(--surface); border: 1px solid var(--border); border-radius: 14px; }
-  .btn-accent { background: var(--accent); color: #fff; border: none; font-weight: 600; }
-  .btn-accent:hover { background: #2489d9; color: #fff; }
-  
+
+  .sidebar {
+    background: var(--bg-soft);
+    border-right: 1px solid var(--border);
+    min-height: calc(100vh - 61px);
+  }
+
+  .sidebar .nav-link {
+    color: var(--text-muted);
+    font-weight: 500;
+    font-size: .92rem;
+    border-radius: 10px;
+    padding: .55rem .8rem;
+    margin-bottom: .15rem;
+    border-left: 3px solid transparent;
+  }
+
+  .sidebar .nav-link i {
+    width: 20px;
+  }
+
+  .sidebar .nav-link.active {
+    background: var(--accent-dim);
+    color: var(--text);
+    border-left: 3px solid var(--accent);
+  }
+
+  .sidebar .nav-link:hover {
+    color: var(--text);
+  }
+
+  .class-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+  }
+
+  .divider {
+    border-top: 1px solid var(--border);
+  }
+
+  .stat-chip {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 14px;
+  }
+
+  .btn-accent {
+    background: var(--accent);
+    color: #fff;
+    border: none;
+    font-weight: 600;
+  }
+
+  .btn-accent:hover {
+    background: #2489d9;
+    color: #fff;
+  }
+
   .m-card {
     background: var(--surface);
     border: 1px solid var(--border);
@@ -43,8 +94,12 @@
     margin-bottom: 1.25rem;
     transition: transform .15s ease, border-color .15s ease;
   }
-  .m-card:hover { border-color: rgba(255,255,255,.2); transform: translateY(-2px); }
-  
+
+  .m-card:hover {
+    border-color: rgba(255, 255, 255, .2);
+    transform: translateY(-2px);
+  }
+
   .m-preview-wrapper {
     height: 160px;
     background: var(--surface-2);
@@ -55,6 +110,7 @@
     overflow: hidden;
     position: relative;
   }
+
   .m-preview-img {
     width: 100%;
     height: 100%;
@@ -62,29 +118,73 @@
     cursor: pointer;
     transition: opacity .15s ease;
   }
-  .m-preview-img:hover { opacity: .9; }
+
+  .m-preview-img:hover {
+    opacity: .9;
+  }
+
   .m-preview-icon {
     font-size: 3rem;
     color: var(--accent);
   }
-  
-  .m-body { padding: 1.1rem; }
-  .m-title { font-family: 'Poppins', sans-serif; font-weight: 600; font-size: .98rem; color: var(--text); }
-  .subject-pill {
-    font-size: .68rem; font-weight: 600; letter-spacing: .02em;
-    border-radius: 6px; padding: .15rem .5rem; display: inline-block;
-    background: var(--accent-dim); color: var(--accent);
+
+  .m-body {
+    padding: 1.1rem;
   }
-  .m-desc { font-size: .85rem; color: var(--text-muted); margin: .4rem 0 .55rem; }
-  .m-meta { font-size: .75rem; color: var(--text-faint); }
-  
+
+  .m-title {
+    font-family: 'Poppins', sans-serif;
+    font-weight: 600;
+    font-size: .98rem;
+    color: var(--text);
+  }
+
+  .subject-pill {
+    font-size: .68rem;
+    font-weight: 600;
+    letter-spacing: .02em;
+    border-radius: 6px;
+    padding: .15rem .5rem;
+    display: inline-block;
+    background: var(--accent-dim);
+    color: var(--accent);
+  }
+
+  .m-desc {
+    font-size: .85rem;
+    color: var(--text-muted);
+    margin: .4rem 0 .55rem;
+  }
+
+  .m-meta {
+    font-size: .75rem;
+    color: var(--text-faint);
+  }
+
   .icon-btn {
-    width: 32px; height: 32px; border-radius: 8px; display: inline-flex; align-items: center; justify-content: center;
-    background: var(--surface-2); border: 1px solid var(--border); color: var(--text-muted);
+    width: 32px;
+    height: 32px;
+    border-radius: 8px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    background: var(--surface-2);
+    border: 1px solid var(--border);
+    color: var(--text-muted);
     transition: background .15s ease, color .15s ease, border-color .15s ease;
   }
-  .icon-btn:hover { color: var(--text); background: var(--accent); border-color: var(--accent); }
-  .icon-btn.btn-delete:hover { color: #fff; background: var(--red); border-color: var(--red); }
+
+  .icon-btn:hover {
+    color: var(--text);
+    background: var(--accent);
+    border-color: var(--accent);
+  }
+
+  .icon-btn.btn-delete:hover {
+    color: #fff;
+    background: var(--red);
+    border-color: var(--red);
+  }
 
   /* Modal Styling */
   .modal-content {
@@ -93,133 +193,160 @@
     color: var(--text);
     border-radius: 16px;
   }
-  .modal-header { border-bottom: 1px solid var(--border); }
-  .modal-footer { border-top: 1px solid var(--border); }
-  .form-control, .form-select {
-    border-radius: 10px; border: 1px solid var(--border); font-size: .9rem;
-    background: var(--surface-2); color: var(--text);
+
+  .modal-header {
+    border-bottom: 1px solid var(--border);
   }
-  .form-control:focus, .form-select:focus {
-    border-color: var(--accent); box-shadow: 0 0 0 .2rem var(--accent-dim);
-    background: var(--surface-2); color: var(--text);
+
+  .modal-footer {
+    border-top: 1px solid var(--border);
   }
-  .form-label { color: var(--text-muted); }
+
+  .form-control,
+  .form-select {
+    border-radius: 10px;
+    border: 1px solid var(--border);
+    font-size: .9rem;
+    background: var(--surface-2);
+    color: var(--text);
+  }
+
+  .form-control:focus,
+  .form-select:focus {
+    border-color: var(--accent);
+    box-shadow: 0 0 0 .2rem var(--accent-dim);
+    background: var(--surface-2);
+    color: var(--text);
+  }
+
+  .form-label {
+    color: var(--text-muted);
+  }
 </style>
 
 <div class="row g-0">
   <!-- Sidebar -->
   <div class="col-12 col-lg-2 sidebar p-3">
     <div class="class-card p-3 mb-3">
-      <div style="font-size:.68rem; letter-spacing:.06em; text-transform:uppercase; color:var(--text-faint); font-weight:600;">Logged in as</div>
+      <div
+        style="font-size:.68rem; letter-spacing:.06em; text-transform:uppercase; color:var(--text-faint); font-weight:600;">
+        Logged in as</div>
       <div class="fw-semibold mt-1">{{user.username}}</div>
       <div class="text-secondary" style="font-size:.78rem;">{{#if isAdmin}}Admin / Teacher{{else}}Student{{/if}}</div>
     </div>
-    
+
     <nav class="nav flex-column">
       <a class="nav-link" href="/dashboard"><i class="bi bi-card-checklist"></i> Assignments</a>
       <a class="nav-link active" href="/materials"><i class="bi bi-folder2-open"></i> Class materials</a>
       {{#if isAdmin}}
-        <a class="nav-link" href="/admin"><i class="bi bi-shield-lock"></i> Admin Panel</a>
+      <a class="nav-link" href="/admin"><i class="bi bi-shield-lock"></i> Admin Panel</a>
       {{/if}}
     </nav>
-    
+
     <div class="divider my-3"></div>
     <a class="nav-link" href="/messages"><i class="bi bi-chat-dots"></i> Message admin</a>
 
     {{#if isAdmin}}
-      <div class="divider my-3"></div>
-      <button class="btn btn-accent w-100 btn-sm" data-bs-toggle="modal" data-bs-target="#newMaterialModal">
-        <i class="bi bi-plus-lg me-1"></i> New Material
-      </button>
+    <div class="divider my-3"></div>
+    <button class="btn btn-accent w-100 btn-sm" data-bs-toggle="modal" data-bs-target="#newMaterialModal">
+      <i class="bi bi-plus-lg me-1"></i> New Material
+    </button>
     {{/if}}
   </div>
 
   <!-- Main Content Area -->
   <div class="col-12 col-lg-10 p-3 p-lg-4">
     {{#if error}}
-      <div class="alert alert-danger py-2 px-3 mb-3" style="font-size: 0.85rem; border-radius: 10px;">
-        {{error}}
-      </div>
+    <div class="alert alert-danger py-2 px-3 mb-3" style="font-size: 0.85rem; border-radius: 10px;">
+      {{error}}
+    </div>
     {{/if}}
 
     <div class="d-flex justify-content-between align-items-end mb-3 flex-wrap gap-2">
       <div>
         <div class="font-display fs-3">Class materials</div>
-        <div class="text-secondary" style="font-size:.9rem;">Slides, handouts, photos, and reference files posted by your teacher.</div>
+        <div class="text-secondary" style="font-size:.9rem;">Slides, handouts, photos, and reference files posted by
+          your teacher.</div>
       </div>
     </div>
 
     <div class="stat-chip p-2 px-3 mb-4 d-inline-block">
-      <span class="text-secondary" style="font-size:.82rem;"><i class="bi bi-folder2 me-1"></i>{{materials.length}} materials available</span>
+      <span class="text-secondary" style="font-size:.82rem;"><i class="bi bi-folder2 me-1"></i>{{materials.length}}
+        materials available</span>
     </div>
 
     <div class="row g-3">
       {{#if materials.length}}
-        {{#each materials}}
-          <div class="col-12 col-md-6 col-xl-4">
-            <div class="m-card">
-              <!-- FILE PREVIEW AREA -->
-              <div class="m-preview-wrapper">
+      {{#each materials}}
+      <div class="col-12 col-md-6 col-xl-4">
+        <div class="m-card">
+          <!-- FILE PREVIEW AREA -->
+          <div class="m-preview-wrapper">
+            {{#if this.isImage}}
+            <img src="{{this.filePath}}" alt="{{this.title}}" class="m-preview-img" data-bs-toggle="modal"
+              data-bs-target="#imagePreviewModal" onclick="showImageModal('{{this.filePath}}', '{{this.title}}')">
+            {{else}}
+            <div class="m-preview-icon">
+              <i class="bi bi-file-earmark-text"></i>
+            </div>
+            {{/if}}
+          </div>
+
+          <!-- CARD CONTENT -->
+          <div class="m-body">
+            <div class="d-flex justify-content-between align-items-start mb-1">
+              <div class="m-title text-truncate" title="{{this.title}}">{{this.title}}</div>
+              <span class="subject-pill ms-2">{{this.subject}}</span>
+            </div>
+
+            <div class="m-desc text-truncate-2">{{this.description}}</div>
+
+            <div
+              class="d-flex justify-content-between align-items-center mt-3 pt-2 border-top border-secondary border-opacity-10">
+              <span class="m-meta text-truncate" style="max-width: 120px;" title="{{this.originalName}}">
+                <i class="bi bi-paperclip me-1"></i>{{this.originalName}}
+              </span>
+
+              <!-- ACTION BUTTONS -->
+              <div class="d-flex gap-1 align-items-center">
                 {{#if this.isImage}}
-                  <img src="{{this.filePath}}" alt="{{this.title}}" class="m-preview-img" data-bs-toggle="modal" data-bs-target="#imagePreviewModal" onclick="showImageModal('{{this.filePath}}', '{{this.title}}')">
-                {{else}}
-                  <div class="m-preview-icon">
-                    <i class="bi bi-file-earmark-text"></i>
-                  </div>
+                <button class="icon-btn" title="View Full Image" data-bs-toggle="modal"
+                  data-bs-target="#imagePreviewModal" onclick="showImageModal('{{this.filePath}}', '{{this.title}}')">
+                  <i class="bi bi-eye"></i>
+                </button>
                 {{/if}}
-              </div>
 
-              <!-- CARD CONTENT -->
-              <div class="m-body">
-                <div class="d-flex justify-content-between align-items-start mb-1">
-                  <div class="m-title text-truncate" title="{{this.title}}">{{this.title}}</div>
-                  <span class="subject-pill ms-2">{{this.subject}}</span>
-                </div>
-                
-                <div class="m-desc text-truncate-2">{{this.description}}</div>
-                
-                <div class="d-flex justify-content-between align-items-center mt-3 pt-2 border-top border-secondary border-opacity-10">
-                  <span class="m-meta text-truncate" style="max-width: 120px;" title="{{this.originalName}}">
-                    <i class="bi bi-paperclip me-1"></i>{{this.originalName}}
-                  </span>
-                  
-                  <!-- ACTION BUTTONS -->
-                  <div class="d-flex gap-1 align-items-center">
-                    {{#if this.isImage}}
-                      <button class="icon-btn" title="View Full Image" data-bs-toggle="modal" data-bs-target="#imagePreviewModal" onclick="showImageModal('{{this.filePath}}', '{{this.title}}')">
-                        <i class="bi bi-eye"></i>
-                      </button>
-                    {{/if}}
-                    
-                    <a href="{{this.filePath}}" download class="icon-btn text-decoration-none" title="Download">
-                      <i class="bi bi-download"></i>
-                    </a>
+                <a href="{{this.filePath}}" download class="icon-btn text-decoration-none" title="Download">
+                  <i class="bi bi-download"></i>
+                </a>
 
-                    {{#if ../isAdmin}}
-                      <!-- EDIT BUTTON -->
-                      <button class="icon-btn" title="Edit Material" data-bs-toggle="modal" data-bs-target="#editMaterialModal" 
-                        onclick="populateEditModal('{{this._id}}', '{{this.title}}', '{{this.subject}}', '{{this.description}}')">
-                        <i class="bi bi-pencil"></i>
-                      </button>
+                {{#if ../isAdmin}}
+                <!-- EDIT BUTTON -->
+                <button class="icon-btn" title="Edit Material" data-bs-toggle="modal"
+                  data-bs-target="#editMaterialModal"
+                  onclick="populateEditModal('{{this._id}}', '{{this.title}}', '{{this.subject}}', '{{this.description}}')">
+                  <i class="bi bi-pencil"></i>
+                </button>
 
-                      <!-- DELETE FORM -->
-                      <form action="/materials/delete/{{this._id}}" method="POST" class="d-inline m-0">
-                        <button type="submit" class="icon-btn btn-delete" title="Delete Material" onclick="return confirm('Delete this material permanently?')">
-                          <i class="bi bi-trash"></i>
-                        </button>
-                      </form>
-                    {{/if}}
-                  </div>
-                </div>
+                <!-- DELETE FORM -->
+                <form action="/materials/delete/{{this._id}}" method="POST" class="d-inline m-0">
+                  <button type="submit" class="icon-btn btn-delete" title="Delete Material"
+                    onclick="return confirm('Delete this material permanently?')">
+                    <i class="bi bi-trash"></i>
+                  </button>
+                </form>
+                {{/if}}
               </div>
             </div>
           </div>
-        {{/each}}
-      {{else}}
-        <div class="col-12 text-center py-5 text-secondary">
-          <i class="bi bi-folder2-open fs-1 d-block mb-2"></i>
-          No class materials have been uploaded yet.
         </div>
+      </div>
+      {{/each}}
+      {{else}}
+      <div class="col-12 text-center py-5 text-secondary">
+        <i class="bi bi-folder2-open fs-1 d-block mb-2"></i>
+        No class materials have been uploaded yet.
+      </div>
       {{/if}}
     </div>
   </div>
@@ -246,7 +373,8 @@
   <div class="modal-dialog modal-dialog-centered">
     <div class="modal-content">
       <div class="modal-header">
-        <h5 class="modal-title font-display fs-5" id="newMaterialModalLabel"><i class="bi bi-upload me-1"></i> Upload New Material</h5>
+        <h5 class="modal-title font-display fs-5" id="newMaterialModalLabel"><i class="bi bi-upload me-1"></i> Upload
+          New Material</h5>
         <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
       </div>
       <form action="/materials" method="POST" enctype="multipart/form-data">
@@ -267,8 +395,11 @@
           </div>
 
           <div class="mb-3">
-            <label class="form-label small fw-semibold">File Attachment</label>
-            <input type="file" name="materialFile" class="form-control" required>
+            <label class="form-label small fw-semibold">File Attachment(s)</label>
+            <!-- Add the 'multiple' attribute -->
+            <input type="file" name="materialFiles" class="form-control" multiple required>
+            <div class="form-text text-secondary" style="font-size: 0.75rem;">You can select multiple files at once.
+            </div>
           </div>
         </div>
         <div class="modal-footer">
@@ -283,11 +414,13 @@
 </div>
 
 <!-- EDIT MATERIAL MODAL -->
-<div class="modal fade" id="editMaterialModal" tabindex="-1" aria-labelledby="editMaterialModalLabel" aria-hidden="true">
+<div class="modal fade" id="editMaterialModal" tabindex="-1" aria-labelledby="editMaterialModalLabel"
+  aria-hidden="true">
   <div class="modal-dialog modal-dialog-centered">
     <div class="modal-content">
       <div class="modal-header">
-        <h5 class="modal-title font-display fs-5" id="editMaterialModalLabel"><i class="bi bi-pencil me-1"></i> Edit Material</h5>
+        <h5 class="modal-title font-display fs-5" id="editMaterialModalLabel"><i class="bi bi-pencil me-1"></i> Edit
+          Material</h5>
         <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
       </div>
       <form id="editMaterialForm" action="" method="POST" enctype="multipart/form-data">
@@ -310,7 +443,8 @@
           <div class="mb-3">
             <label class="form-label small fw-semibold">Replace File (Optional)</label>
             <input type="file" name="materialFile" class="form-control">
-            <div class="form-text text-secondary" style="font-size: 0.75rem;">Leave blank to keep the existing file.</div>
+            <div class="form-text text-secondary" style="font-size: 0.75rem;">Leave blank to keep the existing file.
+            </div>
           </div>
         </div>
         <div class="modal-footer">
