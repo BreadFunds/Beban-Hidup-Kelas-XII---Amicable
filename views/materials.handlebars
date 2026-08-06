@@ -287,10 +287,16 @@
       </div>
       {{/if}}
 
-      <div class="d-flex justify-content-between align-items-end mb-3 flex-wrap gap-2">
+      <div class="d-flex justify-content-between align-items-center mb-3 flex-wrap gap-2">
         <div>
           <div class="font-display fs-3">Class materials</div>
           <div class="text-secondary" style="font-size:.9rem;">Slides, handouts, photos, and reference files posted by your teacher.</div>
+        </div>
+
+        <!-- SEARCH INPUT -->
+        <div class="position-relative" style="min-width: 260px;">
+          <i class="bi bi-search position-absolute top-50 start-0 translate-middle-y ms-3 text-secondary"></i>
+          <input type="text" id="materialSearchInput" class="form-control ps-5" placeholder="Search materials..." onkeyup="filterMaterials()">
         </div>
       </div>
 
@@ -419,8 +425,7 @@
           <div class="mb-3">
             <label class="form-label small fw-semibold">File Attachment(s)</label>
             <input type="file" name="materialFiles" class="form-control" multiple required>
-            <div class="form-text text-secondary" style="font-size: 0.75rem;">You can select multiple files at once.
-            </div>
+            <div class="form-text text-secondary" style="font-size: 0.75rem;">You can select multiple files at once.</div>
           </div>
         </div>
         <div class="modal-footer">
@@ -462,8 +467,7 @@
           <div class="mb-3">
             <label class="form-label small fw-semibold">Replace File (Optional)</label>
             <input type="file" name="materialFile" class="form-control">
-            <div class="form-text text-secondary" style="font-size: 0.75rem;">Leave blank to keep the existing file.
-            </div>
+            <div class="form-text text-secondary" style="font-size: 0.75rem;">Leave blank to keep the existing file.</div>
           </div>
         </div>
         <div class="modal-footer">
@@ -489,5 +493,40 @@
     document.getElementById('editTitle').value = title;
     document.getElementById('editSubject').value = subject;
     document.getElementById('editDescription').value = description;
+  }
+
+  function filterMaterials() {
+    const query = document.getElementById('materialSearchInput').value.toLowerCase().trim();
+    const cards = document.querySelectorAll('.row.g-3 > .col-12');
+    let visibleCount = 0;
+
+    cards.forEach(cardContainer => {
+      if (cardContainer.id === 'noSearchMatches' || !cardContainer.querySelector('.m-card')) return;
+
+      const title = cardContainer.querySelector('.m-title')?.innerText.toLowerCase() || '';
+      const subject = cardContainer.querySelector('.subject-pill')?.innerText.toLowerCase() || '';
+      const desc = cardContainer.querySelector('.m-desc')?.innerText.toLowerCase() || '';
+      const fileName = cardContainer.querySelector('.m-meta')?.innerText.toLowerCase() || '';
+
+      const isMatch = title.includes(query) || subject.includes(query) || desc.includes(query) || fileName.includes(query);
+
+      if (isMatch) {
+        cardContainer.style.display = '';
+        visibleCount++;
+      } else {
+        cardContainer.style.display = 'none';
+      }
+    });
+
+    let noResultsEl = document.getElementById('noSearchMatches');
+    if (!noResultsEl) {
+      noResultsEl = document.createElement('div');
+      noResultsEl.id = 'noSearchMatches';
+      noResultsEl.className = 'col-12 text-center py-5 text-secondary';
+      noResultsEl.innerHTML = '<i class="bi bi-search fs-1 d-block mb-2"></i> No materials match your search.';
+      document.querySelector('.row.g-3').appendChild(noResultsEl);
+    }
+
+    noResultsEl.style.display = (visibleCount === 0 && cards.length > 0) ? 'block' : 'none';
   }
 </script>
