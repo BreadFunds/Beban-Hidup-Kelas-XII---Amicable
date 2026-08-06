@@ -13,6 +13,7 @@
     padding: .55rem .8rem;
     margin-bottom: .15rem;
     border-left: 3px solid transparent;
+    white-space: nowrap;
   }
   .sidebar .nav-link i { width: 20px; }
   .sidebar .nav-link.active {
@@ -34,7 +35,7 @@
     border: 1px solid var(--border);
     border-radius: 14px;
   }
-  .stat-num { font-family: 'Poppins', sans-serif; font-weight: 700; font-size: 1.7rem; line-height: 1; color: var(--text); }
+  .stat-num { font-family: 'Poppins', sans-serif; font-weight: 700; font-size: 1.5rem; line-height: 1; color: var(--text); }
   .stat-label { font-size: .72rem; text-transform: uppercase; letter-spacing: .06em; color: var(--text-faint); font-weight: 600; margin-top: .25rem; }
 
   /* Assignment card */
@@ -43,7 +44,7 @@
     background: var(--surface);
     border: 1px solid var(--border);
     border-radius: 14px;
-    padding: 1rem 1.1rem 1rem 1.3rem;
+    padding: 1rem 1.1rem;
     margin-bottom: .75rem;
     transition: border-color .15s ease, transform .15s ease;
   }
@@ -65,15 +66,15 @@
   }
   .a-title { font-family: 'Poppins', sans-serif; font-weight: 600; font-size: 1rem; color: var(--text); }
   .a-lesson {
-    font-size: 0.9rem; font-weight: 600;
+    font-size: 0.82rem; font-weight: 600;
     background: var(--surface-2); border: 1px solid var(--border); border-radius: 6px; margin-top: 5px;
-    padding: .2rem .6rem; color: var(--text-white); display: inline-block;
+    padding: .15rem .5rem; color: var(--text-white); display: inline-block;
   }
   .a-desc { 
-  font-size: .86rem; 
-  color: var(--text-muted); 
-  margin: .4rem 0 .5rem; 
-  white-space: pre-line; /* Preserves explicit line breaks */
+    font-size: .86rem; 
+    color: var(--text-muted); 
+    margin: .4rem 0 .5rem; 
+    white-space: pre-line;
   }
   .a-meta { font-size: .76rem; color: var(--text-faint); }
   .badge-status {
@@ -81,44 +82,78 @@
     letter-spacing: .03em; text-transform: uppercase;
     border-radius: 6px;
     padding: .2rem .55rem;
+    display: inline-block;
   }
   .badge-status.due { background: var(--accent-dim); color: var(--accent); }
   .badge-status.overdue { background: rgba(240,85,63,.16); color: var(--red); }
   .badge-status.done { background: rgba(255,255,255,.06); color: var(--text-faint); }
+
+  .a-card-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 0.6rem;
+  }
 
   .form-check-input.big {
     width: 1.3rem; height: 1.3rem; margin-top: .1rem;
     border: 1.5px solid var(--text-faint);
     background-color: var(--surface-2);
     cursor: pointer;
+    flex-shrink: 0;
   }
   .form-check-input.big:checked { background-color: var(--accent); border-color: var(--accent); }
+
+  /* Mobile Responsive Adjustments */
+  @media (max-width: 991.98px) {
+    .sidebar {
+      min-height: auto;
+      border-right: none;
+      border-bottom: 1px solid var(--border);
+    }
+    .sidebar-nav-container {
+      display: flex;
+      flex-direction: row;
+      overflow-x: auto;
+      gap: 0.5rem;
+      padding-bottom: 0.25rem;
+    }
+    .sidebar .nav-link {
+      border-left: none;
+      border-bottom: 3px solid transparent;
+      padding: .4rem .75rem;
+    }
+    .sidebar .nav-link.active {
+      border-left: none;
+      border-bottom: 3px solid var(--accent);
+    }
+  }
 </style>
 
-<div class="container-fluid">
+<div class="container-fluid p-0">
   <div class="row g-0">
     
     <!-- SIDEBAR -->
     <div class="col-12 col-lg-2 sidebar p-3">
-      <div class="class-card p-3 mb-3">
-        <div style="font-size:.68rem; letter-spacing:.06em; text-transform:uppercase; color:var(--text-faint); font-weight:600;">Logged in as</div>
-        <div class="fw-semibold mt-1">{{user.username}}</div>
+      <div class="class-card p-3 mb-3 d-flex d-lg-block justify-content-between align-items-center">
+        <div>
+          <div style="font-size:.68rem; letter-spacing:.06em; text-transform:uppercase; color:var(--text-faint); font-weight:600;">Logged in as</div>
+          <div class="fw-semibold mt-1">{{user.username}}</div>
+        </div>
         <div class="text-secondary" style="font-size:.78rem;">{{#if isAdmin}}Class Admin{{else}}Class Student{{/if}}</div>
       </div>
       
-      <nav class="nav flex-column">
-      <a class="nav-link active" href="/dashboard"><i class="bi bi-card-checklist"></i> Assignments</a>
-      <a class="nav-link" href="/materials"><i class="bi bi-folder2-open"></i> Class materials</a>
-      {{#if isAdmin}}
+      <nav class="nav sidebar-nav-container flex-lg-column mb-2 mb-lg-0">
+        <a class="nav-link active" href="/dashboard"><i class="bi bi-card-checklist"></i> Assignments</a>
+        <a class="nav-link" href="/materials"><i class="bi bi-folder2-open"></i> Class materials</a>
+        {{#if isAdmin}}
           <a class="nav-link" href="/admin"><i class="bi bi-shield-lock"></i> Admin Panel</a>
         {{/if}}
-    </nav>
-    <div class="divider my-3"></div>
-    <a class="nav-link" href="/messages"><i class="bi bi-chat-dots"></i> Message admin</a>
+        <a class="nav-link" href="/messages"><i class="bi bi-chat-dots"></i> Message admin</a>
+      </nav>
 
       {{#if isAdmin}}
-        <div class="divider my-3"></div>
-        <button class="btn btn-accent w-100 btn-sm" data-bs-toggle="modal" data-bs-target="#newAssignmentModal">
+        <button class="btn btn-accent w-100 btn-sm mt-2 mt-lg-3" data-bs-toggle="modal" data-bs-target="#newAssignmentModal">
           <i class="bi bi-plus-lg me-1"></i> New Assignment
         </button>
       {{/if}}
@@ -138,7 +173,6 @@
           {{#if isAdmin}}
             <a href="/admin" class="btn btn-warning btn-sm"><i class="bi bi-shield-lock me-1"></i> Admin Panel</a>
           {{/if}}
-          <a href="#" class="btn btn-outline-dark2 btn-sm disabled"><i class="bi bi-chat-dots me-1"></i> Contact Admin</a>
         </div>
       </div>
 
@@ -148,13 +182,13 @@
 
       <!-- STAT STRIP -->
       <div class="row g-2 mb-4">
-        <div class="col-6 col-md-3">
+        <div class="col-6 col-sm-3">
           <div class="stat-chip p-3">
             <div class="stat-num">{{assignments.length}}</div>
             <div class="stat-label">Active Tasks</div>
           </div>
         </div>
-        <div class="col-6 col-md-3">
+        <div class="col-6 col-sm-3">
           <div class="stat-chip p-3">
             <div class="stat-num" style="color:var(--red);">{{archivedAssignments.length}}</div>
             <div class="stat-label">Archived / Past Due</div>
@@ -186,18 +220,36 @@
                 {{#each assignments}}
                   <div class="a-card {{#if this.isCompleted}}status-done{{else}}{{#if this.isDueSoon}}status-due-soon{{else}}status-normal{{/if}}{{/if}}">
                     
-                    {{#if this.isCompleted}}
-                      <span class="badge-status done" style="position:absolute; top:.85rem; right:.9rem;">Completed</span>
-                    {{else}}
-                      {{#if this.isDueSoon}}
-                        <span class="badge-status overdue" style="position:absolute; top:.85rem; right:.9rem;">⚠️ Due < 24h</span>
-                      {{else}}
-                        <span class="badge-status due" style="position:absolute; top:.85rem; right:.9rem;">Active</span>
-                      {{/if}}
-                    {{/if}}
+                    <!-- CARD TOP HEADER ROW (Badge + Action Buttons) -->
+                    <div class="a-card-header">
+                      <div>
+                        {{#if this.isCompleted}}
+                          <span class="badge-status done">Completed</span>
+                        {{else}}
+                          {{#if this.isDueSoon}}
+                            <span class="badge-status overdue">⚠️ Due < 24h</span>
+                          {{else}}
+                            <span class="badge-status due">Active</span>
+                          {{/if}}
+                        {{/if}}
+                      </div>
 
+                      {{#if ../isAdmin}}
+                        <div class="d-flex gap-1">
+                          <button class="btn btn-sm btn-outline-dark2" data-bs-toggle="modal" data-bs-target="#editModal-{{this._id}}">
+                            <i class="bi bi-pencil"></i>
+                          </button>
+                          <form action="/assignments/delete/{{this._id}}" method="POST" class="d-inline">
+                            <button type="submit" class="btn btn-sm btn-outline-danger" onclick="return confirm('Delete assignment?')">
+                              <i class="bi bi-trash"></i>
+                            </button>
+                          </form>
+                        </div>
+                      {{/if}}
+                    </div>
+
+                    <!-- CARD BODY -->
                     <div class="d-flex gap-3 align-items-start">
-                      
                       <!-- Checkbox for Student Completion -->
                       <form action="/assignments/toggle/{{this._id}}" method="POST" id="toggle-form-{{this._id}}">
                         <input 
@@ -212,30 +264,16 @@
                         <div class="a-title">{{this.title}}</div>
                         <span class="a-lesson">{{this.subject}}</span>
                         <div class="a-desc">{{this.description}}</div>
-                        <div class="a-meta"><i class="bi bi-clock-history"></i> Due: {{this.formattedDueDate}}</div>
+                        <div class="a-meta"><i class="bi bi-clock-history me-1"></i>Due: {{this.formattedDueDate}}</div>
                       </div>
-
-                      <!-- Admin-Only Edit / Delete Controls -->
-                      {{#if ../isAdmin}}
-                        <div class="d-flex gap-1 ms-auto align-self-center">
-                          <button class="btn btn-sm btn-outline-dark2" data-bs-toggle="modal" data-bs-target="#editModal-{{this._id}}">
-                            <i class="bi bi-pencil"></i> Edit
-                          </button>
-                          <form action="/assignments/delete/{{this._id}}" method="POST" class="d-inline">
-                            <button type="submit" class="btn btn-sm btn-outline-danger" onclick="return confirm('Delete assignment?')">
-                              <i class="bi bi-trash"></i>
-                            </button>
-                          </form>
-                        </div>
-                      {{/if}}
-
                     </div>
+
                   </div>
 
                   <!-- ADMIN EDIT MODAL -->
                   {{#if ../isAdmin}}
                     <div class="modal fade" id="editModal-{{this._id}}" tabindex="-1">
-                      <div class="modal-dialog">
+                      <div class="modal-dialog modal-dialog-centered">
                         <div class="modal-content">
                           <form action="/assignments/update/{{this._id}}" method="POST">
                             <div class="modal-header border-secondary">
@@ -288,13 +326,7 @@
                 {{#each archivedAssignments}}
                   <div class="a-card {{#if this.isCompleted}}status-done opacity-50{{else}}status-due-soon{{/if}}">
                     
-                    {{#if this.isCompleted}}
-                      <span class="badge-status done" style="position:absolute; top:.85rem; right:.9rem;">Completed (Archived)</span>
-                    {{else}}
-                      <span class="badge-status overdue" style="position:absolute; top:.85rem; right:.9rem;">⚠️ Overdue</span>
-                    {{/if}}
-
-                    <div class="d-flex gap-3 align-items-start">
+                    <div class="d-flex gap-3 align-items-start flex-wrap flex-sm-nowrap">
                       <form action="/assignments/toggle/{{this._id}}" method="POST" id="toggle-form-archived-{{this._id}}">
                         <input 
                           class="form-check-input big" 
@@ -308,11 +340,11 @@
                         <div class="a-title">{{this.title}}</div>
                         <span class="a-lesson">{{this.subject}}</span>
                         <div class="a-desc">{{this.description}}</div>
-                        <div class="a-meta text-danger"><i class="bi bi-clock-history"></i> Expired: {{this.formattedDueDate}}</div>
+                        <div class="a-meta text-danger"><i class="bi bi-clock-history me-1"></i>Expired: {{this.formattedDueDate}}</div>
                       </div>
 
                       {{#if ../isAdmin}}
-                        <div class="d-flex gap-1 ms-auto align-self-center">
+                        <div class="d-flex gap-1 ms-auto align-self-start mt-2 mt-sm-0">
                           <form action="/assignments/delete/{{this._id}}" method="POST" class="d-inline">
                             <button type="submit" class="btn btn-sm btn-outline-danger" onclick="return confirm('Delete assignment?')">
                               <i class="bi bi-trash"></i>
@@ -341,7 +373,7 @@
 <!-- ADMIN-ONLY NEW ASSIGNMENT MODAL -->
 {{#if isAdmin}}
   <div class="modal fade" id="newAssignmentModal" tabindex="-1">
-    <div class="modal-dialog">
+    <div class="modal-dialog modal-dialog-centered">
       <div class="modal-content">
         <form action="/assignments" method="POST">
           <div class="modal-header border-secondary">

@@ -35,6 +35,7 @@
     padding: .55rem .8rem;
     margin-bottom: .15rem;
     border-left: 3px solid transparent;
+    white-space: nowrap;
   }
 
   .sidebar .nav-link i {
@@ -70,13 +71,13 @@
   .stat-num {
     font-family: 'Poppins', sans-serif;
     font-weight: 700;
-    font-size: 1.7rem;
+    font-size: 1.5rem;
     line-height: 1;
     color: var(--text);
   }
 
   .stat-label {
-    font-size: .72rem;
+    font-size: .68rem;
     text-transform: uppercase;
     letter-spacing: .06em;
     color: var(--text-faint);
@@ -135,6 +136,34 @@
     padding-bottom: .5rem;
     border-bottom: 1px solid var(--border);
   }
+
+  /* Mobile Responsive Adaptations */
+  @media (max-width: 991.98px) {
+    .sidebar {
+      min-height: auto;
+      border-right: none;
+      border-bottom: 1px solid var(--border);
+    }
+    .sidebar-nav-container {
+      display: flex;
+      flex-direction: row;
+      overflow-x: auto;
+      gap: 0.5rem;
+      padding-bottom: 0.25rem;
+    }
+    .sidebar .nav-link {
+      border-left: none;
+      border-bottom: 3px solid transparent;
+      padding: .4rem .75rem;
+    }
+    .sidebar .nav-link.active {
+      border-left: none;
+      border-bottom: 3px solid var(--accent);
+    }
+    .stat-num {
+      font-size: 1.3rem;
+    }
+  }
 </style>
 
 <div class="container-fluid p-0">
@@ -142,23 +171,23 @@
 
     <!-- SIDEBAR -->
     <div class="col-12 col-lg-2 sidebar p-3">
-      <div class="class-card p-3 mb-3">
-        <div
-          style="font-size:.68rem; letter-spacing:.06em; text-transform:uppercase; color:var(--text-faint); font-weight:600;">
-          Logged in as</div>
-        <div class="fw-semibold mt-1">{{user.username}}</div>
+      <div class="class-card p-3 mb-3 d-flex d-lg-block justify-content-between align-items-center">
+        <div>
+          <div style="font-size:.68rem; letter-spacing:.06em; text-transform:uppercase; color:var(--text-faint); font-weight:600;">
+            Logged in as</div>
+          <div class="fw-semibold mt-1">{{user.username}}</div>
+        </div>
         <div class="text-secondary" style="font-size:.78rem;">Class Admin</div>
       </div>
 
-      <nav class="nav flex-column">
+      <nav class="nav sidebar-nav-container flex-lg-column mb-2 mb-lg-0">
         <a class="nav-link" href="/dashboard"><i class="bi bi-card-checklist"></i> Assignments</a>
         <a class="nav-link" href="/materials"><i class="bi bi-folder2-open"></i> Class materials</a>
         {{#if isAdmin}}
         <a class="nav-link active" href="/admin"><i class="bi bi-shield-lock"></i> Admin Panel</a>
         {{/if}}
+        <a class="nav-link" href="/messages"><i class="bi bi-chat-dots"></i> Message admin</a>
       </nav>
-      <div class="divider my-3"></div>
-      <a class="nav-link" href="/messages"><i class="bi bi-chat-dots"></i> Message admin</a>
     </div>
 
     <!-- MAIN ADMIN CONTENT -->
@@ -181,28 +210,28 @@
 
       <!-- STAT STRIP -->
       <div class="row g-2 mb-4">
-        <div class="col-6 col-md-3">
+        <div class="col-6 col-sm-3">
           <div class="stat-chip p-3">
             <div class="stat-num">{{assignments.length}}</div>
-            <div class="stat-label">Active Assignments</div>
+            <div class="stat-label">Active Tasks</div>
           </div>
         </div>
-        <div class="col-6 col-md-3">
+        <div class="col-6 col-sm-3">
           <div class="stat-chip p-3">
             <div class="stat-num text-danger">{{archivedAssignments.length}}</div>
-            <div class="stat-label">Archived Assignments</div>
+            <div class="stat-label">Archived</div>
           </div>
         </div>
-        <div class="col-6 col-md-3">
+        <div class="col-6 col-sm-3">
           <div class="stat-chip p-3">
             <div class="stat-num text-warning">{{materials.length}}</div>
-            <div class="stat-label">Class Materials</div>
+            <div class="stat-label">Materials</div>
           </div>
         </div>
-        <div class="col-6 col-md-3">
+        <div class="col-6 col-sm-3">
           <div class="stat-chip p-3">
             <div class="stat-num text-info">{{userCount}}</div>
-            <div class="stat-label">Registered Students</div>
+            <div class="stat-label">Students</div>
           </div>
         </div>
       </div>
@@ -256,7 +285,7 @@
 
         <!-- RIGHT: CREATE NEW ASSIGNMENT FORM -->
         <div class="col-12 col-lg-5">
-          <div class="card-form p-4">
+          <div class="card-form p-3 p-sm-4">
             <div class="font-display fs-6 mb-3"><i class="bi bi-plus-circle me-1"></i> Post New Assignment</div>
 
             <form action="/assignments" method="POST">
@@ -319,7 +348,7 @@
                   <tr class="border-secondary">
                     <td class="fw-semibold">{{this.title}}</td>
                     <td><span class="badge bg-secondary">{{this.subject}}</span></td>
-                    <td class="small text-truncate" style="max-width: 150px;">{{this.originalName}}</td>
+                    <td class="small text-truncate" style="max-width: 130px;">{{this.originalName}}</td>
                     <td class="text-end">
                       <a href="{{this.filePath}}" download class="btn btn-sm btn-outline-light me-1" title="Download">
                         <i class="bi bi-download"></i>
@@ -344,7 +373,7 @@
 
         <!-- RIGHT: UPLOAD NEW MATERIAL FORM -->
         <div class="col-12 col-lg-5">
-          <div class="card-form p-4">
+          <div class="card-form p-3 p-sm-4">
             <div class="font-display fs-6 mb-3"><i class="bi bi-upload me-1"></i> Upload New Material</div>
 
             <form action="/materials" method="POST" enctype="multipart/form-data">
@@ -366,7 +395,6 @@
 
               <div class="mb-3">
                 <label class="form-label small fw-semibold">File Attachment(s)</label>
-                <!-- Add the 'multiple' attribute -->
                 <input type="file" name="materialFiles" class="form-control" multiple required>
                 <div class="form-text text-secondary" style="font-size: 0.75rem;">You can select multiple files at once.
                 </div>
