@@ -8,16 +8,23 @@ const bufferToDataURI = (file) => {
   return `data:${file.mimetype};base64,${base64}`;
 };
 
-// GET /materials
+// GET /materials - Enriches each file in the files array with 'isImage'
 export const getMaterials = async (req, res) => {
   try {
     const rawMaterials = await Material.find().sort({ createdAt: -1 }).lean();
 
     const materials = rawMaterials.map((item) => {
-      const ext = item.originalName ? item.originalName.split('.').pop().toLowerCase() : '';
+      const enrichedFiles = (item.files || []).map((file) => {
+        const ext = file.originalName ? file.originalName.split('.').pop().toLowerCase() : '';
+        return {
+          ...file,
+          isImage: IMAGE_EXTENSIONS.includes(ext)
+        };
+      });
+
       return {
         ...item,
-        isImage: IMAGE_EXTENSIONS.includes(ext)
+        files: enrichedFiles
       };
     });
 
@@ -38,7 +45,7 @@ export const getMaterials = async (req, res) => {
   }
 };
 
-// POST /materials
+// POST /materials - Groups all uploaded files into ONE database document
 export const postMaterial = async (req, res) => {
   try {
     if (!req.files || req.files.length === 0) {
@@ -47,15 +54,21 @@ export const postMaterial = async (req, res) => {
 
     const { title, subject, description } = req.body;
 
-    const materialsToCreate = req.files.map((file, index) => ({
-      title: req.files.length > 1 ? `${title} (${index + 1})` : title,
-      subject,
-      description,
-      filePath: bufferToDataURI(file), // Stored directly as Base64 string in MongoDB
+    // Map all uploaded files into an array of file objects
+    const filesArray = req.files.map((file) => ({
+      filePath: bufferToDataURI(file),
       originalName: file.originalname
     }));
 
-    await Material.insertMany(materialsToCreate);
+    // Save ONE document containing the full array of files
+    await Material.create({
+      title,
+      subject,
+      description,
+      files: filesArray,
+      uploadedBy: req.user ? req.user._id : null
+    });
+
     res.redirect('/materials');
   } catch (err) {
     console.error('Error uploading materials:', err);
@@ -63,7 +76,7 @@ export const postMaterial = async (req, res) => {
   }
 };
 
-// POST /materials/edit/:id
+// POST /materials/edit/:id - Updates title/description and optionally replaces files
 export const updateMaterial = async (req, res) => {
   try {
     const { id } = req.params;
@@ -72,8 +85,10 @@ export const updateMaterial = async (req, res) => {
     const updateData = { title, subject, description };
 
     if (req.file) {
-      updateData.filePath = bufferToDataURI(req.file);
-      updateData.originalName = req.file.originalname;
+      updateData.files = [{
+        filePath: bufferToDataURI(req.file),
+        originalName: req.file.originalname
+      }];
     }
 
     await Material.findByIdAndUpdate(id, updateData);
@@ -84,10 +99,9 @@ export const updateMaterial = async (req, res) => {
   }
 };
 
-// POST /materials/delete/:id
+// POST /materials/delete/:id - Deletes the material document and all its grouped files
 export const deleteMaterial = async (req, res) => {
   try {
-    // Standard MongoDB deletion (No local file cleanup needed)
     await Material.findByIdAndDelete(req.params.id);
     res.redirect('/materials');
   } catch (err) {

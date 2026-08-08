@@ -158,18 +158,25 @@
   }
 
   .m-meta {
-    font-size: .75rem;
-    color: var(--text-faint);
+    font-size: .78rem;
+    color: var(--text-muted);
+  }
+
+  .file-item {
+    background: var(--surface-2);
+    border: 1px solid var(--border-soft);
+    border-radius: 8px;
+    padding: .4rem .6rem;
   }
 
   .icon-btn {
-    width: 32px;
-    height: 32px;
+    width: 30px;
+    height: 30px;
     border-radius: 8px;
     display: inline-flex;
     align-items: center;
     justify-content: center;
-    background: var(--surface-2);
+    background: var(--surface);
     border: 1px solid var(--border);
     color: var(--text-muted);
     transition: background .15s ease, color .15s ease, border-color .15s ease;
@@ -309,16 +316,21 @@
         {{#each materials}}
         <div class="col-12 col-md-6 col-xl-4">
           <div class="m-card">
-            <!-- FILE PREVIEW AREA -->
+
+            <!-- FILE PREVIEW HEADER (Shows 1st Image or Folder Icon) -->
             <div class="m-preview-wrapper">
-              {{#if this.isImage}}
-              <img src="{{this.filePath}}" alt="{{this.title}}" class="m-preview-img" data-bs-toggle="modal"
-                data-bs-target="#imagePreviewModal" onclick="showImageModal('{{this.filePath}}', '{{this.title}}')">
-              {{else}}
-              <div class="m-preview-icon">
-                <i class="bi bi-file-earmark-text"></i>
-              </div>
-              {{/if}}
+              {{#each this.files}}
+                {{#if @first}}
+                  {{#if this.isImage}}
+                  <img src="{{this.filePath}}" alt="{{../this.title}}" class="m-preview-img" data-bs-toggle="modal"
+                    data-bs-target="#imagePreviewModal" onclick="showImageModal('{{this.filePath}}', '{{../this.title}}')">
+                  {{else}}
+                  <div class="m-preview-icon">
+                    <i class="bi bi-folder2-open"></i>
+                  </div>
+                  {{/if}}
+                {{/if}}
+              {{/each}}
             </div>
 
             <!-- CARD CONTENT -->
@@ -330,42 +342,53 @@
 
               <div class="m-desc text-truncate-2">{{this.description}}</div>
 
-              <div class="d-flex justify-content-between align-items-center mt-3 pt-2 border-top border-secondary border-opacity-10">
-                <span class="m-meta text-truncate" style="max-width: 100px;" title="{{this.originalName}}">
-                  <i class="bi bi-paperclip me-1"></i>{{this.originalName}}
-                </span>
+              <!-- ADMIN CONTROLS (EDIT / DELETE MATERIAL) -->
+              {{#if ../isAdmin}}
+              <div class="d-flex gap-1 align-items-center justify-content-end mb-2 pt-2 border-top border-secondary border-opacity-10">
+                <button class="icon-btn" title="Edit Material" data-bs-toggle="modal"
+                  data-bs-target="#editMaterialModal"
+                  onclick="populateEditModal('{{this._id}}', '{{this.title}}', '{{this.subject}}', '{{this.description}}')">
+                  <i class="bi bi-pencil"></i>
+                </button>
 
-                <!-- ACTION BUTTONS -->
-                <div class="d-flex gap-1 align-items-center">
-                  {{#if this.isImage}}
-                  <button class="icon-btn" title="View Full Image" data-bs-toggle="modal"
-                    data-bs-target="#imagePreviewModal" onclick="showImageModal('{{this.filePath}}', '{{this.title}}')">
-                    <i class="bi bi-eye"></i>
+                <form action="/materials/delete/{{this._id}}" method="POST" class="d-inline m-0">
+                  <button type="submit" class="icon-btn btn-delete" title="Delete Material"
+                    onclick="return confirm('Delete this material permanently?')">
+                    <i class="bi bi-trash"></i>
                   </button>
-                  {{/if}}
+                </form>
+              </div>
+              {{/if}}
 
-                  <a href="{{this.filePath}}" download class="icon-btn text-decoration-none" title="Download">
-                    <i class="bi bi-download"></i>
-                  </a>
+              <!-- ATTACHED FILES LIST -->
+              <div class="pt-2 border-top border-secondary border-opacity-10">
+                <div class="text-secondary mb-2" style="font-size: .75rem; font-weight: 600;">
+                  ATTACHED FILES ({{this.files.length}})
+                </div>
+                <div class="d-flex flex-column gap-2">
+                  {{#each this.files}}
+                  <div class="file-item d-flex align-items-center justify-content-between">
+                    <span class="m-meta text-truncate me-2" title="{{this.originalName}}">
+                      <i class="bi {{#if this.isImage}}bi-image text-info{{else}}bi-paperclip{{/if}} me-1"></i>{{this.originalName}}
+                    </span>
 
-                  {{#if ../isAdmin}}
-                  <!-- EDIT BUTTON -->
-                  <button class="icon-btn" title="Edit Material" data-bs-toggle="modal"
-                    data-bs-target="#editMaterialModal"
-                    onclick="populateEditModal('{{this._id}}', '{{this.title}}', '{{this.subject}}', '{{this.description}}')">
-                    <i class="bi bi-pencil"></i>
-                  </button>
+                    <div class="d-flex gap-1 align-items-center flex-shrink-0">
+                      {{#if this.isImage}}
+                      <button class="icon-btn" title="View Image" data-bs-toggle="modal"
+                        data-bs-target="#imagePreviewModal" onclick="showImageModal('{{this.filePath}}', '{{this.originalName}}')">
+                        <i class="bi bi-eye"></i>
+                      </button>
+                      {{/if}}
 
-                  <!-- DELETE FORM -->
-                  <form action="/materials/delete/{{this._id}}" method="POST" class="d-inline m-0">
-                    <button type="submit" class="icon-btn btn-delete" title="Delete Material"
-                      onclick="return confirm('Delete this material permanently?')">
-                      <i class="bi bi-trash"></i>
-                    </button>
-                  </form>
-                  {{/if}}
+                      <a href="{{this.filePath}}" download="{{this.originalName}}" class="icon-btn text-decoration-none" title="Download">
+                        <i class="bi bi-download"></i>
+                      </a>
+                    </div>
+                  </div>
+                  {{/each}}
                 </div>
               </div>
+
             </div>
           </div>
         </div>
@@ -467,7 +490,7 @@
           <div class="mb-3">
             <label class="form-label small fw-semibold">Replace File (Optional)</label>
             <input type="file" name="materialFile" class="form-control">
-            <div class="form-text text-secondary" style="font-size: 0.75rem;">Leave blank to keep the existing file.</div>
+            <div class="form-text text-secondary" style="font-size: 0.75rem;">Leave blank to keep the existing files.</div>
           </div>
         </div>
         <div class="modal-footer">
@@ -503,12 +526,8 @@
     cards.forEach(cardContainer => {
       if (cardContainer.id === 'noSearchMatches' || !cardContainer.querySelector('.m-card')) return;
 
-      const title = cardContainer.querySelector('.m-title')?.innerText.toLowerCase() || '';
-      const subject = cardContainer.querySelector('.subject-pill')?.innerText.toLowerCase() || '';
-      const desc = cardContainer.querySelector('.m-desc')?.innerText.toLowerCase() || '';
-      const fileName = cardContainer.querySelector('.m-meta')?.innerText.toLowerCase() || '';
-
-      const isMatch = title.includes(query) || subject.includes(query) || desc.includes(query) || fileName.includes(query);
+      const cardText = cardContainer.innerText.toLowerCase();
+      const isMatch = cardText.includes(query);
 
       if (isMatch) {
         cardContainer.style.display = '';

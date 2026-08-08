@@ -1,5 +1,16 @@
 import mongoose from 'mongoose';
 
+const fileSchema = new mongoose.Schema({
+  filePath: {
+    type: String,
+    required: true
+  },
+  originalName: {
+    type: String,
+    required: true
+  }
+});
+
 const materialSchema = new mongoose.Schema({
   title: {
     type: String,
@@ -15,14 +26,7 @@ const materialSchema = new mongoose.Schema({
     type: String,
     trim: true
   },
-  filePath: {
-    type: String,
-    required: true
-  },
-  originalName: {
-    type: String,
-    required: true
-  },
+  files: [fileSchema], // Array storing all uploaded files for this material
   uploadedBy: {
     type: mongoose.Schema.Types.ObjectId,
     ref: 'User'
