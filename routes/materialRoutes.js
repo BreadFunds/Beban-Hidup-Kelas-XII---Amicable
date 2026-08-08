@@ -17,7 +17,7 @@ router.get('/', requireAuth, getMaterials);
 router.post('/', requireAuth, requireAdmin, upload.array('materialFiles', 10), postMaterial);
 
 // POST /materials/edit/:id - Edit usually replaces a single file, so keep this as upload.single()
-router.post('/edit/:id', requireAuth, requireAdmin, upload.single('materialFile'), updateMaterial);
+router.post('/edit/:id', requireAuth, requireAdmin, upload.array('materialFiles', 10), updateMaterial);
 
 // POST /materials/delete/:id
 router.post('/delete/:id', requireAuth, requireAdmin, deleteMaterial);

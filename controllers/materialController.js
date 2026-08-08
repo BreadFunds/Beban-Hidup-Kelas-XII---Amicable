@@ -86,11 +86,12 @@ export const updateMaterial = async (req, res) => {
 
     const updateData = { title, subject, description };
 
-    if (req.file) {
-      updateData.files = [{
-        filePath: bufferToDataURI(req.file),
-        originalName: req.file.originalname
-      }];
+    // Process uploaded files if any exist
+    if (req.files && req.files.length > 0) {
+      updateData.files = req.files.map(file => ({
+        filePath: bufferToDataURI(file), // ensure bufferToDataURI helper is imported
+        originalName: file.originalname
+      }));
     }
 
     await Material.findByIdAndUpdate(id, updateData);

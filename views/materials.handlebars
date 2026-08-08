@@ -238,6 +238,7 @@
       border-right: none;
       border-bottom: 1px solid var(--border);
     }
+
     .sidebar-nav-container {
       display: flex;
       flex-direction: row;
@@ -245,11 +246,13 @@
       gap: 0.5rem;
       padding-bottom: 0.25rem;
     }
+
     .sidebar .nav-link {
       border-left: none;
       border-bottom: 3px solid transparent;
       padding: .4rem .75rem;
     }
+
     .sidebar .nav-link.active {
       border-left: none;
       border-bottom: 3px solid var(--accent);
@@ -263,7 +266,8 @@
     <div class="col-12 col-lg-2 sidebar p-3">
       <div class="class-card p-3 mb-3 d-flex d-lg-block justify-content-between align-items-center">
         <div>
-          <div style="font-size:.68rem; letter-spacing:.06em; text-transform:uppercase; color:var(--text-faint); font-weight:600;">
+          <div
+            style="font-size:.68rem; letter-spacing:.06em; text-transform:uppercase; color:var(--text-faint); font-weight:600;">
             Logged in as</div>
           <div class="fw-semibold mt-1">{{user.username}}</div>
         </div>
@@ -276,11 +280,13 @@
         {{#if isAdmin}}
         <a class="nav-link" href="/admin"><i class="bi bi-shield-lock"></i> Admin Panel</a>
         {{/if}}
-        <a class="nav-link" href="https://wa.me/{{phone_number}}?text={{message}}"><i class="bi bi-chat-dots"></i> Message admin</a>
+        <a class="nav-link" href="https://wa.me/{{phone_number}}?text={{message}}"><i class="bi bi-chat-dots"></i>
+          Message admin</a>
       </nav>
 
       {{#if isAdmin}}
-      <button class="btn btn-accent w-100 btn-sm mt-2 mt-lg-3" data-bs-toggle="modal" data-bs-target="#newMaterialModal">
+      <button class="btn btn-accent w-100 btn-sm mt-2 mt-lg-3" data-bs-toggle="modal"
+        data-bs-target="#newMaterialModal">
         <i class="bi bi-plus-lg me-1"></i> New Material
       </button>
       {{/if}}
@@ -297,18 +303,21 @@
       <div class="d-flex justify-content-between align-items-center mb-3 flex-wrap gap-2">
         <div>
           <div class="font-display fs-3">Class materials</div>
-          <div class="text-secondary" style="font-size:.9rem;">Slides, handouts, photos, and reference files posted by your teacher.</div>
+          <div class="text-secondary" style="font-size:.9rem;">Slides, handouts, photos, and reference files posted by
+            your teacher.</div>
         </div>
 
         <!-- SEARCH INPUT -->
         <div class="position-relative" style="min-width: 260px;">
           <i class="bi bi-search position-absolute top-50 start-0 translate-middle-y ms-3 text-secondary"></i>
-          <input type="text" id="materialSearchInput" class="form-control ps-5" placeholder="Search materials..." onkeyup="filterMaterials()">
+          <input type="text" id="materialSearchInput" class="form-control ps-5" placeholder="Search materials..."
+            onkeyup="filterMaterials()">
         </div>
       </div>
 
       <div class="stat-chip p-2 px-3 mb-4 d-inline-block">
-        <span class="text-secondary" style="font-size:.82rem;"><i class="bi bi-folder2 me-1"></i>{{materials.length}} materials available</span>
+        <span class="text-secondary" style="font-size:.82rem;"><i class="bi bi-folder2 me-1"></i>{{materials.length}}
+          materials available</span>
       </div>
 
       <div class="row g-3">
@@ -320,16 +329,16 @@
             <!-- FILE PREVIEW HEADER (Shows 1st Image or Folder Icon) -->
             <div class="m-preview-wrapper">
               {{#each this.files}}
-                {{#if @first}}
-                  {{#if this.isImage}}
-                  <img src="{{this.filePath}}" alt="{{../this.title}}" class="m-preview-img" data-bs-toggle="modal"
-                    data-bs-target="#imagePreviewModal" onclick="showImageModal('{{this.filePath}}', '{{../this.title}}')">
-                  {{else}}
-                  <div class="m-preview-icon">
-                    <i class="bi bi-folder2-open"></i>
-                  </div>
-                  {{/if}}
-                {{/if}}
+              {{#if @first}}
+              {{#if this.isImage}}
+              <img src="{{this.filePath}}" alt="{{../this.title}}" class="m-preview-img" data-bs-toggle="modal"
+                data-bs-target="#imagePreviewModal" onclick="showImageModal('{{this.filePath}}', '{{../this.title}}')">
+              {{else}}
+              <div class="m-preview-icon">
+                <i class="bi bi-folder2-open"></i>
+              </div>
+              {{/if}}
+              {{/if}}
               {{/each}}
             </div>
 
@@ -344,7 +353,8 @@
 
               <!-- ADMIN CONTROLS (EDIT / DELETE MATERIAL) -->
               {{#if ../isAdmin}}
-              <div class="d-flex gap-1 align-items-center justify-content-end mb-2 pt-2 border-top border-secondary border-opacity-10">
+              <div
+                class="d-flex gap-1 align-items-center justify-content-end mb-2 pt-2 border-top border-secondary border-opacity-10">
                 <button class="icon-btn" title="Edit Material" data-bs-toggle="modal"
                   data-bs-target="#editMaterialModal"
                   onclick="populateEditModal('{{this._id}}', '{{this.title}}', '{{this.subject}}', '{{this.description}}')">
@@ -369,18 +379,21 @@
                   {{#each this.files}}
                   <div class="file-item d-flex align-items-center justify-content-between">
                     <span class="m-meta text-truncate me-2" title="{{this.originalName}}">
-                      <i class="bi {{#if this.isImage}}bi-image text-info{{else}}bi-paperclip{{/if}} me-1"></i>{{this.originalName}}
+                      <i
+                        class="bi {{#if this.isImage}}bi-image text-info{{else}}bi-paperclip{{/if}} me-1"></i>{{this.originalName}}
                     </span>
 
                     <div class="d-flex gap-1 align-items-center flex-shrink-0">
                       {{#if this.isImage}}
                       <button class="icon-btn" title="View Image" data-bs-toggle="modal"
-                        data-bs-target="#imagePreviewModal" onclick="showImageModal('{{this.filePath}}', '{{this.originalName}}')">
+                        data-bs-target="#imagePreviewModal"
+                        onclick="showImageModal('{{this.filePath}}', '{{this.originalName}}')">
                         <i class="bi bi-eye"></i>
                       </button>
                       {{/if}}
 
-                      <a href="{{this.filePath}}" download="{{this.originalName}}" class="icon-btn text-decoration-none" title="Download">
+                      <a href="{{this.filePath}}" download="{{this.originalName}}" class="icon-btn text-decoration-none"
+                        title="Download">
                         <i class="bi bi-download"></i>
                       </a>
                     </div>
@@ -425,7 +438,8 @@
   <div class="modal-dialog modal-dialog-centered">
     <div class="modal-content">
       <div class="modal-header">
-        <h5 class="modal-title font-display fs-5" id="newMaterialModalLabel"><i class="bi bi-upload me-1"></i> Upload New Material</h5>
+        <h5 class="modal-title font-display fs-5" id="newMaterialModalLabel"><i class="bi bi-upload me-1"></i> Upload
+          New Material</h5>
         <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
       </div>
       <form action="/materials" method="POST" enctype="multipart/form-data">
@@ -448,7 +462,8 @@
           <div class="mb-3">
             <label class="form-label small fw-semibold">File Attachment(s)</label>
             <input type="file" name="materialFiles" class="form-control" multiple required>
-            <div class="form-text text-secondary" style="font-size: 0.75rem;">You can select multiple files at once.</div>
+            <div class="form-text text-secondary" style="font-size: 0.75rem;">You can select multiple files at once.
+            </div>
           </div>
         </div>
         <div class="modal-footer">
@@ -463,11 +478,13 @@
 </div>
 
 <!-- EDIT MATERIAL MODAL -->
-<div class="modal fade" id="editMaterialModal" tabindex="-1" aria-labelledby="editMaterialModalLabel" aria-hidden="true">
+<div class="modal fade" id="editMaterialModal" tabindex="-1" aria-labelledby="editMaterialModalLabel"
+  aria-hidden="true">
   <div class="modal-dialog modal-dialog-centered">
     <div class="modal-content">
       <div class="modal-header">
-        <h5 class="modal-title font-display fs-5" id="editMaterialModalLabel"><i class="bi bi-pencil me-1"></i> Edit Material</h5>
+        <h5 class="modal-title font-display fs-5" id="editMaterialModalLabel"><i class="bi bi-pencil me-1"></i> Edit
+          Material</h5>
         <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
       </div>
       <form id="editMaterialForm" action="" method="POST" enctype="multipart/form-data">
@@ -489,8 +506,9 @@
 
           <div class="mb-3">
             <label class="form-label small fw-semibold">Replace File (Optional)</label>
-            <input type="file" name="materialFile" class="form-control">
-            <div class="form-text text-secondary" style="font-size: 0.75rem;">Leave blank to keep the existing files.</div>
+            <input type="file" name="materialFiles" class="form-control" multiple>
+            <div class="form-text text-secondary" style="font-size: 0.75rem;">Leave blank to keep the existing files.
+            </div>
           </div>
         </div>
         <div class="modal-footer">
@@ -510,6 +528,15 @@
     document.getElementById('previewModalImage').src = src;
     document.getElementById('previewModalTitle').innerText = title;
   }
+
+  function openEditModal(materialId, currentTitle, currentSubject, currentDesc) {
+  const form = document.getElementById('editMaterialForm');
+  form.action = `/materials/update/${materialId}`; // Points to your POST route
+
+  document.getElementById('editTitle').value = currentTitle;
+  document.getElementById('editSubject').value = currentSubject;
+  document.getElementById('editDescription').value = currentDesc || '';
+}
 
   function populateEditModal(id, title, subject, description) {
     document.getElementById('editMaterialForm').action = '/materials/edit/' + id;
