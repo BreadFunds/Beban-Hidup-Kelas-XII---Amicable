@@ -32,7 +32,9 @@ export const getMaterials = async (req, res) => {
       user: req.user,
       isAdmin: req.user && req.user.role === 'admin',
       materials,
-      error: req.query.error || null
+      error: req.query.error || null,
+      phone_number: "085117706008",
+      message: "Hello, I'd like to ask something."
     });
   } catch (err) {
     console.error('Error fetching materials:', err);

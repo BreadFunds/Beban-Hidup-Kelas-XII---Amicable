@@ -45,7 +45,9 @@ export const getAdminPage = async (req, res) => {
       archivedAssignments: formattedArchived,
       materials: materials || [],
       userCount,
-      error: req.query.error || null
+      error: req.query.error || null,
+      phone_number: "085117706008",
+      message: "Hello, I'd like to ask something."
     });
   } catch (err) {
     console.error('Error rendering admin page:', err);
@@ -150,7 +152,9 @@ export const getDashboard = async (req, res) => {
       isAdmin: currentUser.role === 'admin',
       assignments: activeList,
       archivedAssignments: archivedList,
-      error: req.flash ? req.flash('error') : null
+      error: req.flash ? req.flash('error') : null,
+      phone_number: "085117706008",
+      message: "Hello, I'd like to ask something."
     });
   } catch (err) {
     console.error('Error rendering dashboard:', err);
