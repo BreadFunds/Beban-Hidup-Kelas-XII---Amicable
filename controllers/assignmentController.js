@@ -46,7 +46,7 @@ export const getAdminPage = async (req, res) => {
       materials: materials || [],
       userCount,
       error: req.query.error || null,
-      phone_number: "085117706008",
+      phone_number: "6285117706008",
       message: "Hello, I'd like to ask something."
     });
   } catch (err) {
@@ -153,7 +153,7 @@ export const getDashboard = async (req, res) => {
       assignments: activeList,
       archivedAssignments: archivedList,
       error: req.flash ? req.flash('error') : null,
-      phone_number: "085117706008",
+      phone_number: "6285117706008",
       message: "Hello, I'd like to ask something."
     });
   } catch (err) {

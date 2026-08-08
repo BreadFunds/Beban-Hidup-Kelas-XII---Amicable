@@ -33,7 +33,7 @@ export const getMaterials = async (req, res) => {
       isAdmin: req.user && req.user.role === 'admin',
       materials,
       error: req.query.error || null,
-      phone_number: "085117706008",
+      phone_number: "6285117706008",
       message: "Hello, I'd like to ask something."
     });
   } catch (err) {
