@@ -65,10 +65,6 @@
     border-radius: 12px;
   }
 
-  .divider {
-    border-top: 1px solid var(--border);
-  }
-
   .stat-chip {
     background: var(--surface);
     border: 1px solid var(--border);
@@ -231,6 +227,16 @@
     color: var(--text-muted);
   }
 
+  /* Custom input number spinners hide for cleaner UI */
+  input[type=number]::-webkit-inner-spin-button, 
+  input[type=number]::-webkit-outer-spin-button { 
+    -webkit-appearance: none; 
+    margin: 0; 
+  }
+  input[type=number] {
+    -moz-appearance: textfield;
+  }
+
   /* Mobile Responsive Adaptations */
   @media (max-width: 991.98px) {
     .sidebar {
@@ -323,7 +329,7 @@
         <div class="col-12 col-md-6 col-xl-4">
           <div class="m-card" data-material-id="{{this._id}}">
 
-            <!-- FILE PREVIEW HEADER (Shows 1st Image or Folder Icon) -->
+            <!-- FILE PREVIEW HEADER -->
             <div class="m-preview-wrapper">
               {{#each this.files}}
               {{#if @first}}
@@ -348,7 +354,7 @@
 
               <div class="m-desc text-truncate-2">{{this.description}}</div>
 
-              <!-- ADMIN CONTROLS (EDIT / DELETE MATERIAL) -->
+              <!-- ADMIN CONTROLS -->
               {{#if ../isAdmin}}
               <div class="d-flex gap-1 align-items-center justify-content-end mb-2 pt-2 border-top border-secondary border-opacity-10">
                 <button class="icon-btn" title="Edit Material" data-bs-toggle="modal"
@@ -413,26 +419,50 @@
   </div>
 </div>
 
-<!-- FULL IMAGE PREVIEW MODAL WITH GALLERY NAVIGATION -->
+<!-- FULL IMAGE PREVIEW MODAL WITH GALLERY NAVIGATION & INTERACTIVE ZOOM -->
 <div class="modal fade" id="imagePreviewModal" tabindex="-1" aria-hidden="true">
-  <div class="modal-dialog modal-dialog-centered modal-lg">
+  <div class="modal-dialog modal-dialog-centered modal-xl">
     <div class="modal-content bg-dark border-secondary position-relative">
-      <div class="modal-header border-secondary py-2">
+      <div class="modal-header border-secondary py-2 d-flex justify-content-between align-items-center">
         <div class="d-flex align-items-center gap-2">
           <h6 class="modal-title font-display text-light m-0" id="previewModalTitle">Photo Preview</h6>
           <span class="badge bg-secondary opacity-75" id="previewModalCounter" style="font-size: 0.72rem;"></span>
         </div>
+
+        <!-- ZOOM CONTROLS TOOLBAR -->
+        <div class="d-flex align-items-center gap-1 ms-2 me-2">
+          <button type="button" class="btn btn-sm btn-outline-secondary text-light" onclick="zoomImage(-0.25)" title="Zoom Out">
+            <i class="bi bi-zoom-out"></i>
+          </button>
+          
+          <!-- Interactive Zoom Percentage Input -->
+          <div class="input-group input-group-sm" style="width: 75px;">
+            <input type="number" id="zoomLevelInput" class="form-control text-center bg-dark text-light border-secondary p-0" 
+                   value="100" min="50" max="400" step="5" onchange="handleZoomInput(this.value)" onkeydown="if(event.key==='Enter') this.blur();">
+            <span class="input-group-text bg-dark text-muted border-secondary p-1" style="font-size: 0.75rem;">%</span>
+          </div>
+
+          <button type="button" class="btn btn-sm btn-outline-secondary text-light" onclick="zoomImage(0.25)" title="Zoom In">
+            <i class="bi bi-zoom-in"></i>
+          </button>
+          <button type="button" class="btn btn-sm btn-outline-secondary text-light ms-1" onclick="resetZoom()" title="Reset Zoom">
+            <i class="bi bi-arrow-counterclockwise"></i>
+          </button>
+        </div>
+
         <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
       </div>
       
-      <div class="modal-body p-0 text-center bg-black d-flex align-items-center justify-content-between position-relative" style="min-height: 50vh;">
+      <div class="modal-body p-0 text-center bg-black d-flex align-items-center justify-content-center position-relative overflow-hidden" style="height: 75vh;">
         <!-- Left Arrow Button -->
         <button type="button" class="btn btn-dark position-absolute start-0 top-50 translate-middle-y ms-2 rounded-circle z-3 opacity-75 border-secondary" id="prevImageBtn" onclick="navigateGallery(-1)" style="width: 42px; height: 42px;">
           <i class="bi bi-chevron-left fs-5"></i>
         </button>
 
-        <!-- Main Display Image -->
-        <img src="" id="previewModalImage" class="img-fluid mx-auto" style="max-height: 75vh; object-fit: contain;">
+        <!-- Container for Drag and Zooming -->
+        <div id="imageContainer" style="cursor: grab; display: inline-block; user-select: none; transition: transform 0.1s ease-out;">
+          <img src="" id="previewModalImage" class="img-fluid" style="max-height: 70vh; object-fit: contain; pointer-events: none;">
+        </div>
 
         <!-- Right Arrow Button -->
         <button type="button" class="btn btn-dark position-absolute end-0 top-50 translate-middle-y me-2 rounded-circle z-3 opacity-75 border-secondary" id="nextImageBtn" onclick="navigateGallery(1)" style="width: 42px; height: 42px;">
@@ -538,14 +568,20 @@
   let activeGallery = [];
   let currentGalleryIndex = 0;
 
+  // Zoom and Pan State Variables
+  let zoomScale = 1;
+  let translateX = 0;
+  let translateY = 0;
+  let isDragging = false;
+  let startX = 0;
+  let startY = 0;
+
   function openGalleryFromPath(materialId, targetPath) {
     activeGallery = [];
 
-    // Find card container corresponding to materialId
     const targetCard = document.querySelector(`.m-card[data-material-id="${materialId}"]`);
 
     if (targetCard) {
-      // Collect only image view buttons
       const imageButtons = targetCard.querySelectorAll('.btn-view-image');
 
       imageButtons.forEach(btn => {
@@ -561,7 +597,6 @@
       });
     }
 
-    // Find current index matching clicked image target path
     const foundIndex = activeGallery.findIndex(item => item.filePath === targetPath);
     currentGalleryIndex = foundIndex !== -1 ? foundIndex : 0;
 
@@ -571,15 +606,15 @@
   function renderGalleryItem() {
     if (activeGallery.length === 0) return;
 
+    resetZoom(); // Reset zoom every time image changes
+
     const item = activeGallery[currentGalleryIndex];
     document.getElementById('previewModalImage').src = item.filePath;
     document.getElementById('previewModalTitle').innerText = item.title;
     
-    // Update count indicator badge
     document.getElementById('previewModalCounter').innerText = 
       activeGallery.length > 1 ? `${currentGalleryIndex + 1} of ${activeGallery.length}` : '';
 
-    // Show/Hide Left & Right arrows depending on image count
     const prevBtn = document.getElementById('prevImageBtn');
     const nextBtn = document.getElementById('nextImageBtn');
 
@@ -597,7 +632,6 @@
     
     currentGalleryIndex += direction;
 
-    // Wrap around endlessly
     if (currentGalleryIndex < 0) {
       currentGalleryIndex = activeGallery.length - 1;
     } else if (currentGalleryIndex >= activeGallery.length) {
@@ -607,12 +641,105 @@
     renderGalleryItem();
   }
 
-  // Keyboard navigation listener (Left / Right Arrow Keys)
+  // --- ZOOM & PAN CONTROLS ---
+
+  function applyTransform() {
+    const container = document.getElementById('imageContainer');
+    const input = document.getElementById('zoomLevelInput');
+
+    container.style.transform = `translate(${translateX}px, ${translateY}px) scale(${zoomScale})`;
+    
+    // Sync numerical input value unless user is currently typing inside it
+    if (input && document.activeElement !== input) {
+      input.value = Math.round(zoomScale * 100);
+    }
+
+    // Adjust cursor state based on zoom level
+    if (zoomScale > 1) {
+      container.style.cursor = isDragging ? 'grabbing' : 'grab';
+    } else {
+      container.style.cursor = 'default';
+    }
+  }
+
+  function handleZoomInput(value) {
+    let parsedValue = parseFloat(value);
+    
+    if (isNaN(parsedValue)) parsedValue = 100;
+    parsedValue = Math.min(Math.max(50, parsedValue), 400); // Clamp 50% - 400%
+
+    zoomScale = parsedValue / 100;
+    if (zoomScale === 1) {
+      translateX = 0;
+      translateY = 0;
+    }
+    applyTransform();
+  }
+
+  function zoomImage(step) {
+    zoomScale += step;
+    zoomScale = Math.min(Math.max(0.5, zoomScale), 4); // Limit zoom between 50% and 400%
+
+    if (zoomScale === 1) {
+      translateX = 0;
+      translateY = 0;
+    }
+    applyTransform();
+  }
+
+  function resetZoom() {
+    zoomScale = 1;
+    translateX = 0;
+    translateY = 0;
+    applyTransform();
+  }
+
+  // Mouse Wheel Zoom Event
+  document.getElementById('imageContainer')?.addEventListener('wheel', (e) => {
+    e.preventDefault();
+    if (e.deltaY < 0) {
+      zoomImage(0.15);
+    } else {
+      zoomImage(-0.15);
+    }
+  }, { passive: false });
+
+  // Click & Drag Panning Logic
+  const imgContainer = document.getElementById('imageContainer');
+
+  imgContainer?.addEventListener('mousedown', (e) => {
+    if (zoomScale <= 1) return; // Allow panning only when zoomed in
+    isDragging = true;
+    startX = e.clientX - translateX;
+    startY = e.clientY - translateY;
+    imgContainer.style.cursor = 'grabbing';
+  });
+
+  window.addEventListener('mousemove', (e) => {
+    if (!isDragging) return;
+    e.preventDefault();
+    translateX = e.clientX - startX;
+    translateY = e.clientY - startY;
+    applyTransform();
+  });
+
+  window.addEventListener('mouseup', () => {
+    if (isDragging) {
+      isDragging = false;
+      applyTransform();
+    }
+  });
+
+  // Keyboard navigation & Shortcuts (Left / Right Arrow, Zoom +/-)
   document.addEventListener('keydown', (e) => {
     const modalEl = document.getElementById('imagePreviewModal');
-    if (modalEl && modalEl.classList.contains('show')) {
+    // Don't trigger keyboard shortcuts when actively typing in input fields
+    if (modalEl && modalEl.classList.contains('show') && document.activeElement.tagName !== 'INPUT') {
       if (e.key === 'ArrowLeft') navigateGallery(-1);
       if (e.key === 'ArrowRight') navigateGallery(1);
+      if (e.key === '+' || e.key === '=') zoomImage(0.25);
+      if (e.key === '-') zoomImage(-0.25);
+      if (e.key === '0') resetZoom();
     }
   });
 
@@ -653,4 +780,4 @@
 
     noResultsEl.style.display = (visibleCount === 0 && cards.length > 0) ? 'block' : 'none';
   }
-</script>
+</script> 
