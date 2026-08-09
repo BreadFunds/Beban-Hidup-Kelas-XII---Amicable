@@ -237,6 +237,13 @@
     -moz-appearance: textfield;
   }
 
+  /* Image Container Mobile Zoom Improvements */
+  #imageContainer {
+    touch-action: none; /* Prevents mobile browser native scrolling while dragging/zooming */
+    will-change: transform;
+    transform-origin: center center;
+  }
+
   /* Mobile Responsive Adaptations */
   @media (max-width: 991.98px) {
     .sidebar {
@@ -262,6 +269,21 @@
     .sidebar .nav-link.active {
       border-left: none;
       border-bottom: 3px solid var(--accent);
+    }
+  }
+
+  @media (max-width: 576px) {
+    .zoom-toolbar {
+      gap: 0.25rem !important;
+    }
+    .zoom-input-group {
+      width: 60px !important;
+    }
+    .zoom-input-group input {
+      font-size: 0.75rem !important;
+    }
+    .modal-body-preview {
+      height: 65vh !important;
     }
   }
 </style>
@@ -419,53 +441,53 @@
   </div>
 </div>
 
-<!-- FULL IMAGE PREVIEW MODAL WITH GALLERY NAVIGATION & INTERACTIVE ZOOM -->
+<!-- FULL IMAGE PREVIEW MODAL WITH GALLERY NAVIGATION & MOBILE TOUCH ZOOM -->
 <div class="modal fade" id="imagePreviewModal" tabindex="-1" aria-hidden="true">
   <div class="modal-dialog modal-dialog-centered modal-xl">
     <div class="modal-content bg-dark border-secondary position-relative">
-      <div class="modal-header border-secondary py-2 d-flex justify-content-between align-items-center">
+      <div class="modal-header border-secondary py-2 d-flex justify-content-between align-items-center flex-wrap gap-2">
         <div class="d-flex align-items-center gap-2">
-          <h6 class="modal-title font-display text-light m-0" id="previewModalTitle">Photo Preview</h6>
+          <h6 class="modal-title font-display text-light m-0 text-truncate" id="previewModalTitle" style="max-width: 180px;">Photo Preview</h6>
           <span class="badge bg-secondary opacity-75" id="previewModalCounter" style="font-size: 0.72rem;"></span>
         </div>
 
         <!-- ZOOM CONTROLS TOOLBAR -->
-        <div class="d-flex align-items-center gap-1 ms-2 me-2">
-          <button type="button" class="btn btn-sm btn-outline-secondary text-light" onclick="zoomImage(-0.25)" title="Zoom Out">
+        <div class="zoom-toolbar d-flex align-items-center gap-1 ms-auto">
+          <button type="button" class="btn btn-sm btn-outline-secondary text-light p-1 px-2" onclick="zoomImage(-0.25)" title="Zoom Out">
             <i class="bi bi-zoom-out"></i>
           </button>
           
           <!-- Interactive Zoom Percentage Input -->
-          <div class="input-group input-group-sm" style="width: 75px;">
+          <div class="input-group input-group-sm zoom-input-group" style="width: 75px;">
             <input type="number" id="zoomLevelInput" class="form-control text-center bg-dark text-light border-secondary p-0" 
                    value="100" min="50" max="400" step="5" onchange="handleZoomInput(this.value)" onkeydown="if(event.key==='Enter') this.blur();">
             <span class="input-group-text bg-dark text-muted border-secondary p-1" style="font-size: 0.75rem;">%</span>
           </div>
 
-          <button type="button" class="btn btn-sm btn-outline-secondary text-light" onclick="zoomImage(0.25)" title="Zoom In">
+          <button type="button" class="btn btn-sm btn-outline-secondary text-light p-1 px-2" onclick="zoomImage(0.25)" title="Zoom In">
             <i class="bi bi-zoom-in"></i>
           </button>
-          <button type="button" class="btn btn-sm btn-outline-secondary text-light ms-1" onclick="resetZoom()" title="Reset Zoom">
+          <button type="button" class="btn btn-sm btn-outline-secondary text-light p-1 px-2 ms-1" onclick="resetZoom()" title="Reset Zoom">
             <i class="bi bi-arrow-counterclockwise"></i>
           </button>
         </div>
 
-        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+        <button type="button" class="btn-close btn-close-white ms-2" data-bs-dismiss="modal" aria-label="Close"></button>
       </div>
       
-      <div class="modal-body p-0 text-center bg-black d-flex align-items-center justify-content-center position-relative overflow-hidden" style="height: 75vh;">
+      <div class="modal-body modal-body-preview p-0 text-center bg-black d-flex align-items-center justify-content-center position-relative overflow-hidden" style="height: 75vh;">
         <!-- Left Arrow Button -->
-        <button type="button" class="btn btn-dark position-absolute start-0 top-50 translate-middle-y ms-2 rounded-circle z-3 opacity-75 border-secondary" id="prevImageBtn" onclick="navigateGallery(-1)" style="width: 42px; height: 42px;">
+        <button type="button" class="btn btn-dark position-absolute start-0 top-50 translate-middle-y ms-2 rounded-circle z-3 opacity-75 border-secondary d-flex align-items-center justify-content-center" id="prevImageBtn" onclick="navigateGallery(-1)" style="width: 42px; height: 42px;">
           <i class="bi bi-chevron-left fs-5"></i>
         </button>
 
         <!-- Container for Drag and Zooming -->
-        <div id="imageContainer" style="cursor: grab; display: inline-block; user-select: none; transition: transform 0.1s ease-out;">
+        <div id="imageContainer" style="cursor: grab; display: inline-block; user-select: none;">
           <img src="" id="previewModalImage" class="img-fluid" style="max-height: 70vh; object-fit: contain; pointer-events: none;">
         </div>
 
         <!-- Right Arrow Button -->
-        <button type="button" class="btn btn-dark position-absolute end-0 top-50 translate-middle-y me-2 rounded-circle z-3 opacity-75 border-secondary" id="nextImageBtn" onclick="navigateGallery(1)" style="width: 42px; height: 42px;">
+        <button type="button" class="btn btn-dark position-absolute end-0 top-50 translate-middle-y me-2 rounded-circle z-3 opacity-75 border-secondary d-flex align-items-center justify-content-center" id="nextImageBtn" onclick="navigateGallery(1)" style="width: 42px; height: 42px;">
           <i class="bi bi-chevron-right fs-5"></i>
         </button>
       </div>
@@ -576,6 +598,11 @@
   let startX = 0;
   let startY = 0;
 
+  // Touch Gesture State Tracking
+  let initialPinchDistance = 0;
+  let initialScale = 1;
+  let lastTapTime = 0;
+
   function openGalleryFromPath(materialId, targetPath) {
     activeGallery = [];
 
@@ -622,8 +649,8 @@
       prevBtn.style.display = 'none';
       nextBtn.style.display = 'none';
     } else {
-      prevBtn.style.display = 'block';
-      nextBtn.style.display = 'block';
+      prevBtn.style.display = 'flex';
+      nextBtn.style.display = 'flex';
     }
   }
 
@@ -643,10 +670,12 @@
 
   // --- ZOOM & PAN CONTROLS ---
 
-  function applyTransform() {
+  function applyTransform(smooth = false) {
     const container = document.getElementById('imageContainer');
     const input = document.getElementById('zoomLevelInput');
 
+    // Enable smooth transition for programmatic clicks/resets, disable during direct user dragging
+    container.style.transition = smooth ? 'transform 0.2s ease-out' : 'none';
     container.style.transform = `translate(${translateX}px, ${translateY}px) scale(${zoomScale})`;
     
     // Sync numerical input value unless user is currently typing inside it
@@ -673,7 +702,7 @@
       translateX = 0;
       translateY = 0;
     }
-    applyTransform();
+    applyTransform(true);
   }
 
   function zoomImage(step) {
@@ -684,14 +713,14 @@
       translateX = 0;
       translateY = 0;
     }
-    applyTransform();
+    applyTransform(true);
   }
 
   function resetZoom() {
     zoomScale = 1;
     translateX = 0;
     translateY = 0;
-    applyTransform();
+    applyTransform(true);
   }
 
   // Mouse Wheel Zoom Event
@@ -704,7 +733,7 @@
     }
   }, { passive: false });
 
-  // Click & Drag Panning Logic
+  // --- MOUSE DRAGGING ---
   const imgContainer = document.getElementById('imageContainer');
 
   imgContainer?.addEventListener('mousedown', (e) => {
@@ -720,20 +749,94 @@
     e.preventDefault();
     translateX = e.clientX - startX;
     translateY = e.clientY - startY;
-    applyTransform();
+    applyTransform(false);
   });
 
   window.addEventListener('mouseup', () => {
     if (isDragging) {
       isDragging = false;
-      applyTransform();
+      applyTransform(false);
     }
   });
 
-  // Keyboard navigation & Shortcuts (Left / Right Arrow, Zoom +/-)
+  // --- MOBILE TOUCH GESTURES (Pinch to Zoom, Pan, Double-Tap) ---
+
+  function getTouchDistance(touches) {
+    return Math.hypot(
+      touches[0].clientX - touches[1].clientX,
+      touches[0].clientY - touches[1].clientY
+    );
+  }
+
+  imgContainer?.addEventListener('touchstart', (e) => {
+    const now = Date.now();
+
+    // 1. Double-tap gesture handling
+    if (e.touches.length === 1) {
+      if (now - lastTapTime < 300) {
+        e.preventDefault();
+        if (zoomScale > 1) {
+          resetZoom();
+        } else {
+          zoomScale = 2.5;
+          applyTransform(true);
+        }
+        lastTapTime = 0;
+        return;
+      }
+      lastTapTime = now;
+
+      // Single finger drag initialization
+      if (zoomScale > 1) {
+        isDragging = true;
+        startX = e.touches[0].clientX - translateX;
+        startY = e.touches[0].clientY - translateY;
+      }
+    }
+
+    // 2. Pinch gesture initialization (Two fingers)
+    if (e.touches.length === 2) {
+      isDragging = false;
+      initialPinchDistance = getTouchDistance(e.touches);
+      initialScale = zoomScale;
+    }
+  }, { passive: false });
+
+  imgContainer?.addEventListener('touchmove', (e) => {
+    // Two-finger pinch-to-zoom
+    if (e.touches.length === 2 && initialPinchDistance > 0) {
+      e.preventDefault();
+      const currentDistance = getTouchDistance(e.touches);
+      const scaleFactor = currentDistance / initialPinchDistance;
+      
+      zoomScale = Math.min(Math.max(0.8, initialScale * scaleFactor), 4);
+      applyTransform(false);
+    } 
+    // One-finger panning when zoomed in
+    else if (e.touches.length === 1 && isDragging && zoomScale > 1) {
+      e.preventDefault();
+      translateX = e.touches[0].clientX - startX;
+      translateY = e.touches[0].clientY - startY;
+      applyTransform(false);
+    }
+  }, { passive: false });
+
+  imgContainer?.addEventListener('touchend', (e) => {
+    if (e.touches.length < 2) {
+      initialPinchDistance = 0;
+    }
+    if (e.touches.length === 0) {
+      isDragging = false;
+      // Snap scale back if zoomed out below 1x during pinch bounce
+      if (zoomScale < 1) {
+        resetZoom();
+      }
+    }
+  });
+
+  // Keyboard navigation & Shortcuts
   document.addEventListener('keydown', (e) => {
     const modalEl = document.getElementById('imagePreviewModal');
-    // Don't trigger keyboard shortcuts when actively typing in input fields
     if (modalEl && modalEl.classList.contains('show') && document.activeElement.tagName !== 'INPUT') {
       if (e.key === 'ArrowLeft') navigateGallery(-1);
       if (e.key === 'ArrowRight') navigateGallery(1);
@@ -780,4 +883,4 @@
 
     noResultsEl.style.display = (visibleCount === 0 && cards.length > 0) ? 'block' : 'none';
   }
-</script> 
+</script>
