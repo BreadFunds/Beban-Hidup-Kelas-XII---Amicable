@@ -61,16 +61,20 @@ export const createAssignment = async (req, res) => {
     const { title, subject, description, dueDate } = req.body;
 
     if (!title || !subject || !description || !dueDate) {
-      return res.status(400).redirect('/admin?error=All fields are required');
+      return res.redirect('/admin?error=All fields are required');
     }
 
     const currentUser = req.user || (req.session && req.session.user);
+
+    // Explicitly parse the input as GMT+7 (Asia/Jakarta)
+    // Converts "2026-08-14T19:00" -> "2026-08-14T19:00:00+07:00"
+    const parsedDueDate = new Date(`${dueDate}:00+07:00`);
 
     const newAssignment = new Assignment({
       title,
       subject,
       description,
-      dueDate: new Date(dueDate),
+      dueDate: parsedDueDate,
       createdBy: currentUser ? currentUser._id : null
     });
 
@@ -78,7 +82,7 @@ export const createAssignment = async (req, res) => {
     res.redirect('/admin');
   } catch (err) {
     console.error('Error creating assignment:', err);
-    res.status(500).redirect('/admin?error=Failed to create assignment');
+    res.redirect('/admin?error=Failed to create assignment');
   }
 };
 
@@ -125,19 +129,32 @@ export const getDashboard = async (req, res) => {
 
       const isDueSoon = !isCompleted && !isPastDue && (dueDate <= twentyFourHoursFromNow);
 
+      // --- FIX 1: Format UI text string specifically for GMT+7 (Asia/Jakarta) ---
+      const formattedDueDate = dueDate.toLocaleString('en-US', {
+        timeZone: 'Asia/Jakarta', // Forces GMT+7
+        month: 'short',
+        day: 'numeric',
+        year: 'numeric',
+        hour: '2-digit',
+        minute: '2-digit',
+        hour12: false // Set to true if you prefer 12-hour AM/PM format
+      });
+
+      // --- FIX 2: Offset date by +7 hours so ISO string matches GMT+7 for datetime-local inputs ---
+      let rawDueDate = '';
+      if (item.dueDate) {
+        const gmt7OffsetMs = 7 * 60 * 60 * 1000;
+        const gmt7Date = new Date(dueDate.getTime() + gmt7OffsetMs);
+        rawDueDate = gmt7Date.toISOString().slice(0, 16); // Outputs "YYYY-MM-DDTHH:mm"
+      }
+
       const formattedItem = {
         ...item,
         isCompleted,
         isPastDue,
         isDueSoon,
-        formattedDueDate: dueDate.toLocaleDateString('en-US', {
-          month: 'short',
-          day: 'numeric',
-          year: 'numeric',
-          hour: '2-digit',
-          minute: '2-digit'
-        }),
-        rawDueDate: item.dueDate ? new Date(item.dueDate).toISOString().slice(0, 16) : ''
+        formattedDueDate,
+        rawDueDate
       };
 
       if (isPastDue) {
