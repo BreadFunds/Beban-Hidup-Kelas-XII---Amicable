@@ -6,33 +6,55 @@ import Material from '../models/Material.js'; // 1. ADDED MISSING IMPORT
 export const getAdminPage = async (req, res) => {
   try {
     // 1. Fetch assignments & users
-    const assignments = await Assignment.find({ isArchived: { $ne: true } }).lean();
+    const allAssignments = await Assignment.find({ isArchived: { $ne: true } }).lean();
     const archivedAssignments = await Assignment.find({ isArchived: true }).lean();
     const userCount = await User.countDocuments({ role: 'student' });
+    const now = new Date();
+
+    const activeList = [];
+    const archivedList = [];
 
     // 2. Fetch class materials
     const materials = await Material.find().sort({ createdAt: -1 }).lean();
 
     // 3. Format dates & attach input properties
-    const formattedAssignments = assignments.map(a => {
-      const due = new Date(a.dueDate);
-      return {
-        ...a,
-        rawDueDate: due.toISOString().slice(0, 16),
-        formattedDueDate: due.toLocaleString('en-US', {
-          dateStyle: 'medium',
-          timeStyle: 'short'
-        })
-      };
-    });
+    allAssignments.forEach(item => {
+      const dueDate = new Date(item.dueDate);
+      
+      const isPastDue = dueDate < now;
 
-    const formattedArchived = archivedAssignments.map(a => ({
-      ...a,
-      formattedDueDate: new Date(a.dueDate).toLocaleString('en-US', {
-        dateStyle: 'medium',
-        timeStyle: 'short'
-      })
-    }));
+      // --- FIX 1: Format UI text string specifically for GMT+7 (Asia/Jakarta) ---
+      const formattedDueDate = dueDate.toLocaleString('en-US', {
+        timeZone: 'Asia/Jakarta', // Forces GMT+7
+        month: 'short',
+        day: 'numeric',
+        year: 'numeric',
+        hour: '2-digit',
+        minute: '2-digit',
+        hour12: false // Set to true if you prefer 12-hour AM/PM format
+      });
+
+      // --- FIX 2: Offset date by +7 hours so ISO string matches GMT+7 for datetime-local inputs ---
+      let rawDueDate = '';
+      if (item.dueDate) {
+        const gmt7OffsetMs = 7 * 60 * 60 * 1000;
+        const gmt7Date = new Date(dueDate.getTime() + gmt7OffsetMs);
+        rawDueDate = gmt7Date.toISOString().slice(0, 16); // Outputs "YYYY-MM-DDTHH:mm"
+      }
+
+      const formattedItem = {
+        ...item,
+        isPastDue,
+        formattedDueDate,
+        rawDueDate
+      };
+
+      if (isPastDue) {
+        archivedList.push(formattedItem);
+      } else {
+        activeList.push(formattedItem);
+      }
+    });
 
     // Safe user lookup (fallback between req.user and req.session.user)
     const currentUser = req.user || (req.session && req.session.user);
@@ -41,8 +63,8 @@ export const getAdminPage = async (req, res) => {
     res.render('admin', {
       user: currentUser,
       isAdmin: true,
-      assignments: formattedAssignments,
-      archivedAssignments: formattedArchived,
+      assignments: activeList,
+      archivedAssignments: archivedList,
       materials: materials || [],
       userCount,
       error: req.query.error || null,
@@ -65,9 +87,7 @@ export const createAssignment = async (req, res) => {
     }
 
     const currentUser = req.user || (req.session && req.session.user);
-
-    // Explicitly parse the input as GMT+7 (Asia/Jakarta)
-    // Converts "2026-08-14T19:00" -> "2026-08-14T19:00:00+07:00"
+    
     const parsedDueDate = new Date(`${dueDate}:00+07:00`);
 
     const newAssignment = new Assignment({
