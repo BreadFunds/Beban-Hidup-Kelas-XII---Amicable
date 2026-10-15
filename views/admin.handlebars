@@ -402,10 +402,10 @@
                     <td><span class="badge bg-secondary">{{this.subject}}</span></td>
                     <td class="small text-truncate" style="max-width: 130px;">{{this.originalName}}</td>
                     <td class="text-end">
-                      <a href="{{this.filePath}}" download class="btn btn-sm btn-outline-light me-1" title="Download">
+                      <a href="{{this.filePath}}" download class="btn btn-sm mb-1 btn-outline-light" title="Download">
                         <i class="bi bi-download"></i>
                       </a>
-                      <form action="/materials/delete/{{this._id}}" method="POST" class="d-inline">
+                      <form action="/materials/delete/{{this._id}}" method="POST">
                         <button type="submit" class="btn btn-sm btn-outline-danger"
                           onclick="return confirm('Delete this material permanently?')" title="Delete">
                           <i class="bi bi-trash"></i>
