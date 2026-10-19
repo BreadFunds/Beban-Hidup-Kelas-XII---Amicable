@@ -8,7 +8,7 @@ const TELEGRAM_TOKEN = process.env.TELEGRAM_BOT_TOKEN;
 const CHAT_ID = process.env.TELEGRAM_CHAT_ID;
 
 // Run every hour: '0 * * * *'
-cron.schedule('0 * * * *', async () => {
+cron.schedule('* * * * *', async () => {
   console.log('Checking for upcoming assignment deadlines...');
 
   try {
