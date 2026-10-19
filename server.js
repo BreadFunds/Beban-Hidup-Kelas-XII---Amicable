@@ -14,12 +14,15 @@ import authRoutes from './routes/authRoutes.js';
 import assignmentRoutes from './routes/assignmentRoutes.js';
 import materialRoutes from './routes/materialRoutes.js';
 
+// Import Database Connection caching helper
+import './db.js'; 
+
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
 const app = express();
 
-// Trust reverse proxies (Vercel, Render, Heroku, Nginx)
+// Trust reverse proxies (Vercel)
 app.set('trust proxy', 1);
 
 // 1. Template Engine Setup (Handlebars)
@@ -35,26 +38,19 @@ app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
 app.use(express.static(path.join(__dirname, 'public')));
 
-// 3. Database Connection
-const mongoURI = process.env.MONGO_URI;
-
-mongoose.connect(mongoURI)
-  .then(() => console.log('MongoDB Connected Successfully'))
-  .catch((err) => console.error('MongoDB Connection Error:', err));
-
 // 4. Session Middleware with Persistent Mongo Store
 app.use(session({
   secret: process.env.SECRET_KEY,
   resave: false,
   saveUninitialized: false,
   store: MongoStore.create({
-    mongoUrl: mongoURI,
+    mongoUrl: process.env.MONGO_URI || process.env.MONGODB_URI,
     ttl: 24 * 60 * 60 // 1 day in seconds
   }),
   cookie: { 
     maxAge: 1000 * 60 * 60 * 24, // 1 day in milliseconds
     httpOnly: true,
-    secure: process.env.NODE_ENV === 'production', // true if using HTTPS
+    secure: process.env.NODE_ENV === 'production',
     sameSite: 'lax'
   }
 }));
@@ -62,13 +58,14 @@ app.use(session({
 // 5. Mount Routes
 app.use('/', authRoutes);
 app.use('/', assignmentRoutes);
-app.use('/materials', materialRoutes); // Corrected mounting path
+app.use('/materials', materialRoutes);
 
-// 6. Start Server
+// 6. Local Server vs Vercel Export
 const PORT = process.env.PORT || 3000;
-app.listen(PORT, () => {
-  console.log(`Server running on http://localhost:${PORT}`);
-});
+if (process.env.NODE_ENV !== 'production') {
+  app.listen(PORT, () => {
+    console.log(`Server running on http://localhost:${PORT}`);
+  });
+}
 
-// 7. Initialize Telegram Reminder Background Worker
-import './reminderworker.js';
+export default app;

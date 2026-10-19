@@ -22,4 +22,9 @@ router.post('/assignments', requireAuth, requireAdmin, createAssignment);
 router.post('/assignments/update/:id', requireAuth, requireAdmin, updateAssignment);
 router.post('/assignments/delete/:id', requireAuth, requireAdmin, deleteAssignment);
 
+import { triggerRemindersCron } from '../controllers/assignmentController.js';
+
+// Vercel cron job endpoint (unprotected or secured with a cron secret)
+router.get('/api/cron/reminders', triggerRemindersCron);
+
 export default router;

@@ -1,6 +1,7 @@
 import Assignment from '../models/Assignment.js';
 import User from '../models/User.js';
 import Material from '../models/Material.js'; // 1. ADDED MISSING IMPORT
+import axios from 'axios';
 
 // GET /admin — Render Admin Console
 export const getAdminPage = async (req, res) => {
@@ -241,5 +242,44 @@ export const updateAssignment = async (req, res) => {
   } catch (err) {
     console.error('Error updating assignment:', err);
     res.redirect('/admin?error=Failed to update assignment');
+  }
+};
+
+export const triggerRemindersCron = async (req, res) => {
+  try {
+    const TELEGRAM_TOKEN = process.env.TELEGRAM_BOT_TOKEN;
+    const CHAT_ID = process.env.TELEGRAM_CHAT_ID;
+
+    const now = new Date();
+    // Strict 1-hour window for assignments due in exactly 24 hours
+    const in24HoursStart = new Date(now.getTime() + 23.5 * 60 * 60 * 1000); 
+    const in24HoursEnd = new Date(now.getTime() + 24.5 * 60 * 60 * 1000);
+
+    const assignments = await Assignment.find({
+      dueDate: { $gte: in24HoursStart, $lte: in24HoursEnd },$or: [
+        { reminded: false },
+        { reminded: { $exists: false } }
+      ]
+    });
+
+    let sentCount = 0;
+    for (const assignment of assignments) {
+      const message = `⚠️ **Reminder:** Your assignment *"${assignment.title}"* (${assignment.subject}) is due in 24 hours!`;
+      
+      await axios.post(`https://api.telegram.org/bot${TELEGRAM_TOKEN}/sendMessage`, {
+        chat_id: CHAT_ID,
+        text: message,
+        parse_mode: 'Markdown'
+      });
+
+      assignment.reminded = true;
+      await assignment.save();
+      sentCount++;
+    }
+
+    return res.status(200).json({ success: true, remindersSent: sentCount });
+  } catch (error) {
+    console.error('Failed to send Telegram reminder via cron:', error.response?.data || error.message);
+    return res.status(500).json({ error: 'Failed to send reminders' });
   }
 };
